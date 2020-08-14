@@ -10,13 +10,28 @@ export interface Person {
 	name: string;
 }
 
-export type SkillRatings = Record<string, number>;
-export type SkillCategories = Record<string, SkillRatings>;
+export interface SkillRating {
+	rating: number;
+	skill: string;
+}
+
+export type SkillRatingsRecord = Record<string, number>;
+
+export function skillRatingsRecordToArray(record: SkillRatingsRecord): SkillRating[] {
+	return Object.entries(record).map(
+		([skill, rating]: [string, number]): SkillRating => ({
+			rating,
+			skill,
+		}),
+	);
+}
+
+export type SkillCategoriesRecord = Record<string, SkillRatingsRecord>;
 
 export interface Resume {
 	mission: string;
 	person: Person;
-	skills: SkillCategories;
+	skills: SkillCategoriesRecord;
 }
 
 export interface ResumeProps {

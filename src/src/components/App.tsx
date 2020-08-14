@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Col, Container, Row } from 'reactstrap';
 import { useResume } from '../hooks/use-resume';
-import { Resume, SkillRatings } from '../resume';
+import { Resume, SkillRatingsRecord } from '../resume';
 import './App.css';
 import { Mission } from './Mission';
 import { Person } from './Person';
@@ -40,10 +40,10 @@ const App: FC = () => {
 							<Row>
 								{Object.entries(resume.skills).map(
 									(
-										[category, skillRatings]: [string, SkillRatings],
+										[category, skillRatings]: [string, SkillRatingsRecord],
 										skillCategoryIndex: number,
 									) => (
-										<Col key={skillCategoryIndex} lg={6} xs={12}>
+										<Col key={skillCategoryIndex} md={6} xs={12}>
 											<Section heading={category}>
 												<SkillRatingsChart skillRatings={skillRatings} />
 											</Section>
