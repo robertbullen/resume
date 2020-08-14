@@ -7,6 +7,9 @@ interface Props {
 }
 
 export const SkillRatingsChart: FC<Props> = (props: Props) => {
+	const skillBarsClass = 'skill-bars';
+	const skillLabelsClass = 'skill-labels';
+
 	const svgRef = useRef<SVGSVGElement>(null);
 
 	useEffect((): void => {
@@ -18,18 +21,34 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 		type SkillRatingTuple = [string, number];
 		const skillRatingsTuples: SkillRatingTuple[] = Object.entries(props.skillRatings);
 
-		d3.select(svgElement)
+		const svgSelection = d3.select(svgElement);
+
+		svgSelection
+			.select(`g.${skillLabelsClass}`)
 			.selectAll('text')
 			.data(skillRatingsTuples)
 			.join('text')
 			.attr('x', 0)
-			.attr('y', (_tuple: SkillRatingTuple, skillIndex: number): number => skillIndex * 16)
+			.attr('y', (_, skillIndex: number): number => skillIndex * 16 + 16)
 			.text((tuple: SkillRatingTuple): string => tuple[0]);
+
+		svgSelection
+			.select(`g.${skillBarsClass}`)
+			.selectAll('rect')
+			.data(skillRatingsTuples)
+			.join('rect')
+			.attr('x', 50)
+			.attr('y', (_, skillIndex: number): number => skillIndex * 16 + 2)
+			.attr('width', 100)
+			.attr('height', 12);
 	}, [props.skillRatings]);
 
 	return (
 		<div className="skill-ratings-chart">
-			<svg ref={svgRef}></svg>
+			<svg ref={svgRef}>
+				<g className={skillLabelsClass} />
+				<g className={skillBarsClass} />
+			</svg>
 		</div>
 	);
 };
