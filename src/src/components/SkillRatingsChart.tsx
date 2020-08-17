@@ -23,12 +23,20 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 	);
 
 	// Declare some constants for sizing.
-	const fontSize = 20;
-	const plotRegionMargin = fontSize / 2;
-	const xLabelsHeight = fontSize * 2.5;
-	const yLabelsWidth = fontSize * 4;
-
 	const { ref, width } = useResizeObserver<HTMLDivElement>();
+
+	const computedStyle: CSSStyleDeclaration | null =
+		ref.current && window.getComputedStyle(ref.current);
+	const fontSize: number = computedStyle
+		? Number.parseFloat(computedStyle.getPropertyValue('font-size'))
+		: 14;
+	const lineHeight: number = computedStyle
+		? Number.parseFloat(computedStyle.getPropertyValue('line-height'))
+		: fontSize * 1.25;
+
+	const plotRegionMargin = fontSize / 2;
+	const xLabelsHeight = lineHeight * 3;
+	const yLabelsWidth = lineHeight * 4.5;
 
 	type Regions = Record<'chart' | 'plot' | 'xLabels' | 'yLabels', Rectangle>;
 
@@ -41,7 +49,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			x: 0,
 			y: 0,
 			width,
-			height: props.skillRatings.length * fontSize + plotRegionMargin + xLabelsHeight,
+			height: props.skillRatings.length * lineHeight + plotRegionMargin + xLabelsHeight,
 		});
 
 		const plot = new Rectangle({
@@ -71,7 +79,14 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			xLabels,
 			yLabels,
 		};
-	}, [plotRegionMargin, props.skillRatings.length, width, xLabelsHeight, yLabelsWidth]);
+	}, [
+		lineHeight,
+		plotRegionMargin,
+		props.skillRatings.length,
+		width,
+		xLabelsHeight,
+		yLabelsWidth,
+	]);
 
 	const [sortBy, setSortBy] = useState<keyof SkillRating>(props.sortBy ?? 'skill');
 	const [sortDesc, setSortDesc] = useState<boolean>(props.sortDesc ?? sortBy === 'rating');
@@ -100,21 +115,6 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 		}
 
 		const container = d3.select(ref.current);
-		// Create the SVG element and child groups.
-		// const outlineRegions = true;
-		// if (outlineRegions) {
-		// 	const outlinesGroup = svg.append('g').attr('class', 'outlines');
-		// 	for (const region of [xLabelsRegion, yLabelsRegion, regions.plot]) {
-		// 		outlinesGroup
-		// 			.append('rect')
-		// 			.attr('fill', 'none')
-		// 			.attr('height', region.height)
-		// 			.attr('stroke', 'red')
-		// 			.attr('width', region.width)
-		// 			.attr('x', region.left)
-		// 			.attr('y', region.top);
-		// 	}
-		// }
 
 		// Draw the grid.
 		container
@@ -147,10 +147,10 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			.attr(
 				'transform',
 				(skillLevel: SkillRating): string =>
-					`rotate(-45,${range(skillLevel)},${regions.xLabels.y + fontSize})`,
+					`rotate(-45,${range(skillLevel)},${regions.xLabels.y})`,
 			)
 			.attr('x', range)
-			.attr('y', regions.xLabels.y)
+			.attr('y', regions.xLabels.y + fontSize)
 			.text(skill);
 
 		// Draw the y-axis labels and bars.
@@ -174,7 +174,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			.join('text')
 			.attr('text-anchor', 'end')
 			.attr('x', regions.yLabels.right)
-			.attr('y', (_, skillIndex: number): number => skillIndex * fontSize + fontSize * 0.9)
+			.attr('y', (_, skillIndex: number): number => skillIndex * lineHeight + fontSize)
 			.text(skill);
 
 		container
@@ -184,11 +184,21 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			.join('rect')
 			.attr('data-skill', skill)
 			.attr('data-rating', rating)
-			.attr('height', fontSize * 0.6)
+			.attr('height', fontSize * 0.75)
 			.attr('width', (skillRating: SkillRating): number => range(skillRating) - scale(0))
 			.attr('x', scale(0))
-			.attr('y', (_, skillIndex: number): number => skillIndex * fontSize + fontSize * 0.4);
-	}, [props.skillRatings, ref, regions, skillLevels, sortBy, sortDesc, xLabelsHeight]);
+			.attr('y', (_, skillIndex: number): number => skillIndex * lineHeight + fontSize * 0.3);
+	}, [
+		fontSize,
+		lineHeight,
+		props.skillRatings,
+		ref,
+		regions,
+		skillLevels,
+		sortBy,
+		sortDesc,
+		xLabelsHeight,
+	]);
 
 	// Create some unique IDs for SVG fragment IDs.
 	const [linearGradientId] = useState(uniqueId('linear-gradient-'));
