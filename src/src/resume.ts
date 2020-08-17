@@ -42,7 +42,7 @@ export const robert: Resume = {
 			{
 				fontAwesomeClassNames: useSquareIcons
 					? 'fas fa-envelope-square'
-					: 'fas fa-envelope-open-text',
+					: 'fas fa-envelope',
 				handle: 'robert@robertbullen.com',
 				name: 'Email',
 				url: 'mailto:robert@robertbullen.com',
@@ -54,7 +54,9 @@ export const robert: Resume = {
 			// 	url: 'tel:+19529946216',
 			// },
 			{
-				fontAwesomeClassNames: useSquareIcons ? 'fab fa-github-square' : 'fab fa-github',
+				fontAwesomeClassNames: useSquareIcons
+					? 'fab fa-github-square'
+					: 'fab fa-github-alt',
 				handle: '@robertbullen',
 				name: 'GitHub',
 				url: 'https://github.com/robertbullen',
