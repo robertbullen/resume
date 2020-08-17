@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
 import { Col, Container, Row } from 'reactstrap';
 import { useResume } from '../hooks/use-resume';
-import { Resume, SkillRatingsRecord } from '../resume';
+import { Resume, SkillRating } from '../resume';
 import './App.css';
+import { Candidate } from './Candidate';
 import { Mission } from './Mission';
-import { Person } from './Person';
-import { Section } from './Section';
+import { generateSectionId, Section } from './Section';
 import { SkillRatingsChart } from './SkillRatingsChart';
 
 const App: FC = () => {
@@ -20,10 +20,14 @@ const App: FC = () => {
 				<Container>
 					<Row>
 						<Col xl={6} xs={12}>
-							<Person resume={resume} />
+							<Section id="candidate">
+								<Candidate resume={resume} />
+							</Section>
 						</Col>
 						<Col xl={6} xs={12}>
-							<Mission resume={resume} />
+							<Section id="mission">
+								<Mission resume={resume} />
+							</Section>
 						</Col>
 					</Row>
 				</Container>
@@ -34,17 +38,22 @@ const App: FC = () => {
 						<Col xl={6} xs={12}>
 							<Row>
 								<Col>
-									<Section heading="Pursuits & Interests">hello</Section>
+									<Section heading="Pursuits & Interests" id="pursuits-interests">
+										hello
+									</Section>
 								</Col>
 							</Row>
 							<Row>
 								{Object.entries(resume.skills).map(
 									(
-										[category, skillRatings]: [string, SkillRatingsRecord],
+										[category, skillRatings]: [string, SkillRating[]],
 										skillCategoryIndex: number,
 									) => (
 										<Col key={skillCategoryIndex} md={6} xs={12}>
-											<Section heading={category}>
+											<Section
+												heading={category}
+												id={generateSectionId(category)}
+											>
 												<SkillRatingsChart skillRatings={skillRatings} />
 											</Section>
 										</Col>
@@ -53,7 +62,9 @@ const App: FC = () => {
 							</Row>
 						</Col>
 						<Col xl={6} xs={12}>
-							<Section heading="Experience">TODO: Timeline</Section>
+							<Section heading="Experience" id="experience">
+								TODO: Timeline
+							</Section>
 						</Col>
 					</Row>
 				</Container>

@@ -2,30 +2,24 @@ import * as d3 from 'd3';
 import { uniqueId } from 'lodash';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import useResizeObserver from 'use-resize-observer';
-import { SkillRating, SkillRatingsRecord, skillRatingsRecordToArray } from '../resume';
+import { SkillRating, skillRatingMax } from '../resume';
 import { Rectangle } from './rectangle';
 
 interface Props {
-	skillRatings: SkillRatingsRecord;
+	skillRatings: SkillRating[];
+	sortBy?: keyof SkillRating;
+	sortDesc?: boolean;
 }
 
 export const SkillRatingsChart: FC<Props> = (props: Props) => {
 	// Declare some helpful skill values.
-	const skillRatingMax = 5;
-
-	const skillLevelObjects = useMemo(
-		(): SkillRating[] =>
-			skillRatingsRecordToArray({
-				Capable: skillRatingMax * 0.15,
-				Proficient: skillRatingMax * 0.5,
-				Expert: skillRatingMax * 0.85,
-			}),
+	const skillLevels = useMemo(
+		(): SkillRating[] => [
+			{ rating: skillRatingMax * 0.15, skill: 'Capable' },
+			{ rating: skillRatingMax * 0.5, skill: 'Proficient' },
+			{ rating: skillRatingMax * 0.85, skill: 'Expert' },
+		],
 		[],
-	);
-
-	const skillRatingObjects = useMemo(
-		(): SkillRating[] => skillRatingsRecordToArray(props.skillRatings),
-		[props.skillRatings],
 	);
 
 	// Declare some constants for sizing.
@@ -47,7 +41,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			x: 0,
 			y: 0,
 			width,
-			height: skillRatingObjects.length * fontSize + plotRegionMargin + xLabelsHeight,
+			height: props.skillRatings.length * fontSize + plotRegionMargin + xLabelsHeight,
 		});
 
 		const plot = new Rectangle({
@@ -77,7 +71,10 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			xLabels,
 			yLabels,
 		};
-	}, [skillRatingObjects.length, width]);
+	}, [plotRegionMargin, props.skillRatings.length, width, xLabelsHeight, yLabelsWidth]);
+
+	const [sortBy, setSortBy] = useState<keyof SkillRating>(props.sortBy ?? 'skill');
+	const [sortDesc, setSortDesc] = useState<boolean>(props.sortDesc ?? sortBy === 'rating');
 
 	useEffect((): void => {
 		if (!ref.current || !regions) {
@@ -123,7 +120,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 		container
 			.select('g.x-grid')
 			.selectAll('polyline')
-			.data(skillLevelObjects)
+			.data(skillLevels)
 			.join('polyline')
 			.attr('data-level', skill)
 			.attr('data-rating', rating)
@@ -138,11 +135,11 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 				return `${x0},${y0} ${x1},${y1} ${x2},${y2}`;
 			});
 
-		// Draw the labels.
+		// Draw the x-axis labels.
 		container
 			.select('g.x-labels')
 			.selectAll('text')
-			.data(skillLevelObjects)
+			.data(skillLevels)
 			.join('text')
 			.attr('data-level', skill)
 			.attr('data-rating', rating)
@@ -156,21 +153,34 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			.attr('y', regions.xLabels.y)
 			.text(skill);
 
+		// Draw the y-axis labels and bars.
+		type Comparer = Parameters<Array<SkillRating>['sort']>[0];
+		const comparer: Comparer = (left: SkillRating, right: SkillRating): number => {
+			let result: number =
+				sortBy === 'rating'
+					? left.rating - right.rating
+					: left.skill.localeCompare(right.skill);
+			if (sortDesc) {
+				result = -result;
+			}
+			return result;
+		};
+		const sortedSkillRatings = props.skillRatings.slice().sort(comparer);
+
 		container
 			.select('g.y-labels')
 			.selectAll('text')
-			.data(skillRatingObjects)
+			.data(sortedSkillRatings)
 			.join('text')
 			.attr('text-anchor', 'end')
 			.attr('x', regions.yLabels.right)
 			.attr('y', (_, skillIndex: number): number => skillIndex * fontSize + fontSize * 0.9)
 			.text(skill);
 
-		// Draw the bars.
 		container
 			.select('g.bars')
 			.selectAll('rect')
-			.data(skillRatingObjects)
+			.data(sortedSkillRatings)
 			.join('rect')
 			.attr('data-skill', skill)
 			.attr('data-rating', rating)
@@ -178,14 +188,14 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			.attr('width', (skillRating: SkillRating): number => range(skillRating) - scale(0))
 			.attr('x', scale(0))
 			.attr('y', (_, skillIndex: number): number => skillIndex * fontSize + fontSize * 0.4);
-	}, [ref, regions, skillLevelObjects, skillRatingObjects]);
+	}, [props.skillRatings, ref, regions, skillLevels, sortBy, sortDesc, xLabelsHeight]);
 
 	// Create some unique IDs for SVG fragment IDs.
 	const [linearGradientId] = useState(uniqueId('linear-gradient-'));
 	const [maskId] = useState(uniqueId('mask-'));
 
 	return (
-		<div className="skill-ratings-chart" id="" ref={ref}>
+		<div className="skill-ratings-chart-component" ref={ref}>
 			{regions && (
 				<svg height={regions.chart.height} width="100%">
 					<defs>
@@ -199,8 +209,23 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 					</defs>
 					<g className="x-grid" />
 					<g className="x-labels" />
-					<g className="y-labels" />
-					<g className="bars" mask={`url(#${maskId})`} />
+					<g
+						className="y-labels"
+						onClick={(): void => {
+							setSortDesc(sortBy === 'skill' ? !sortDesc : false);
+							setSortBy('skill');
+						}}
+						style={{ cursor: 'pointer' }}
+					/>
+					<g
+						className="bars"
+						mask={`url(#${maskId})`}
+						onClick={(): void => {
+							setSortDesc(sortBy === 'rating' ? !sortDesc : true);
+							setSortBy('rating');
+						}}
+						style={{ cursor: 'pointer' }}
+					/>
 				</svg>
 			)}
 		</div>

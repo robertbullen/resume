@@ -1,11 +1,47 @@
-.display-3 {
-	font-size: 3rem;
-}
-.display-4 {
-	font-size: 2rem;
+body {
+	color: #333333 !important;
+	font-weight: 300;
 }
 
-.skill-ratings-chart {
+h1 {
+	color: #ff7300;
+	font-size: 4.5rem;
+	font-weight: 200;
+	line-height: 0.9;
+	margin-bottom: 0;
+	text-transform: uppercase;
+}
+
+h2 {
+	font-size: 1.33rem;
+	font-weight: 200;
+	text-transform: uppercase;
+}
+
+section {
+	margin-bottom: 3rem;
+}
+
+.candidate-component > div {
+	display: inline-block;
+}
+
+.candidate-component a {
+	color: #666666;
+}
+
+.candidate-component ul {
+	display: flex;
+	justify-content: space-between;
+	list-style-type: none;
+	padding-left: 0;
+}
+
+.mission-component p {
+	text-align: justify;
+}
+
+.skill-ratings-chart-component {
 	font-size: smaller;
 }
 

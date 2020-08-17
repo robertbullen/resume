@@ -1,11 +1,11 @@
 export interface ContactService {
+	fontAwesomeClassNames: string;
 	handle: string;
-	iconUrl?: string;
 	name: string;
 	url: string;
 }
 
-export interface Person {
+export interface Candidate {
 	contactServices: ContactService[];
 	name: string;
 }
@@ -15,50 +15,52 @@ export interface SkillRating {
 	skill: string;
 }
 
-export type SkillRatingsRecord = Record<string, number>;
+export const skillRatingMax = 5;
 
-export function skillRatingsRecordToArray(record: SkillRatingsRecord): SkillRating[] {
-	return Object.entries(record).map(
-		([skill, rating]: [string, number]): SkillRating => ({
-			rating,
-			skill,
-		}),
-	);
+export type SkillCategoriesRecord = Record<string, SkillRating[]>;
+
+export interface Experience {
+	finishDate: Date;
+	highlights: string[];
+	organization: string;
+	role: string;
+	startDate: Date;
 }
 
-export type SkillCategoriesRecord = Record<string, SkillRatingsRecord>;
-
 export interface Resume {
+	candidate: Candidate;
+	experiences: Experience[];
 	mission: string;
-	person: Person;
 	skills: SkillCategoriesRecord;
 }
 
-export interface ResumeProps {
-	resume: Resume;
-}
+const useSquareIcons = false;
 
 export const robert: Resume = {
-	mission:
-		'Robert leverages his analytical and creative talents to the fullest when designing and writing modern full stack applications. He is enthusiastic and experienced when it comes to discovering promising software development technologies and adopting best practices.',
-	person: {
+	candidate: {
 		contactServices: [
 			{
+				fontAwesomeClassNames: useSquareIcons
+					? 'fas fa-envelope-square'
+					: 'fas fa-envelope-open-text',
 				handle: 'robert@robertbullen.com',
 				name: 'Email',
 				url: 'mailto:robert@robertbullen.com',
 			},
 			// {
-			//     service: 'Phone',
-			//     text: '952-994-6216',
-			//     url: 'tel:+19529946216',
+			// 	fontAwesomeClassNames: useSquareIcons ? 'fas fa-phone-square' : 'fas fa-mobile-alt',
+			// 	handle: '952-994-6216',
+			// 	name: 'Phone',
+			// 	url: 'tel:+19529946216',
 			// },
 			{
+				fontAwesomeClassNames: useSquareIcons ? 'fab fa-github-square' : 'fab fa-github',
 				handle: '@robertbullen',
 				name: 'GitHub',
 				url: 'https://github.com/robertbullen',
 			},
 			{
+				fontAwesomeClassNames: useSquareIcons ? 'fab fa-twitter-square' : 'fab fa-twitter',
 				handle: '@BullenRobert',
 				name: 'Twitter',
 				url: 'https://twitter.com/BullenRobert',
@@ -66,24 +68,41 @@ export const robert: Resume = {
 		],
 		name: 'Robert Bullen',
 	},
+	experiences: [
+		{
+			finishDate: new Date('1999-12-01'),
+			highlights: [],
+			organization: 'University of Minnesota, I.T.',
+			role: 'B.S. in Computer Science',
+			startDate: new Date('1994-09-01'),
+		},
+	],
+	mission:
+		'Robert leverages his analytical and creative talents to the fullest when designing and writing modern full stack applications. He is enthusiastic and experienced when it comes to discovering promising software development technologies and adopting best practices.',
 	skills: {
-		'Software Engineering': {
-			'Express': 4,
-			'HTML+CSS': 4,
-			'JavaScript': 4,
-			'Node.js': 4,
-			'OOP': 4,
-			'React': 3,
-			'SQL': 3,
-			'TypeScript': 5,
-			'Unit Testing': 4,
-			'Vue': 3,
-		},
-		'Architecture & Leadership': {
-			AWS: 4,
-		},
-		'Packet Analysis': {
-			Foo: 5,
-		},
+		'Software Engineering': [
+			{ rating: 4, skill: 'Express' },
+			{ rating: 4, skill: 'HTML+CSS' },
+			{ rating: 4, skill: 'JavaScript' },
+			{ rating: 4, skill: 'Node.js' },
+			{ rating: 4, skill: 'OOP' },
+			{ rating: 3, skill: 'React' },
+			{ rating: 3, skill: 'SQL' },
+			{ rating: 5, skill: 'TypeScript' },
+			{ rating: 4, skill: 'Unit Testing' },
+			{ rating: 3, skill: 'Vue' },
+		],
+		'Architecture & Leadership': [{ rating: 4, skill: 'AWS' }],
+		'Packet Analysis': [{ rating: 5, skill: 'Foo' }],
 	},
 };
+
+export interface ResumeProps {
+	resume: Resume;
+}
+
+// DevSecOps Engineer Senior Constellation
+// • Architected and led the development of insurecareteams.com, an AWS
+// serverless web application using TypeScript, React, and Express
+// • Established a CI/CD process integrating GitHub & CodeBuild to perform
+// cross-account AWS deployments using either pulumi or the AWS CDK • Fostered team knowledge transfer with regular lunch & learns
