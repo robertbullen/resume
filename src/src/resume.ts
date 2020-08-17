@@ -34,7 +34,7 @@ export interface Resume {
 	skills: SkillCategoriesRecord;
 }
 
-const useSquareIcons = false;
+const useSquareIcons = true;
 
 export const robert: Resume = {
 	candidate: {

@@ -35,7 +35,8 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 		: fontSize * 1.25;
 
 	const plotRegionMargin = fontSize / 2;
-	const xLabelsHeight = lineHeight * 3;
+	const xLabelsRotationDegrees = 30;
+	const xLabelsHeight = lineHeight * 2.5;
 	const yLabelsWidth = lineHeight * 4.5;
 
 	type Regions = Record<'chart' | 'plot' | 'xLabels' | 'yLabels', Rectangle>;
@@ -116,7 +117,12 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 
 		const container = d3.select(ref.current);
 
-		// Draw the grid.
+		// Draw the grid. Tails are the hypotenuse of a triangle having height of xLabelsHeight and
+		// width of xGridTailOffset, which is calculated here as `adjacent = opposite / tan(θ)`.
+		const opposite = xLabelsHeight;
+		const theta = (xLabelsRotationDegrees * Math.PI) / 180;
+		const adjacent = opposite / Math.tan(theta);
+
 		container
 			.select('g.x-grid')
 			.selectAll('polyline')
@@ -130,7 +136,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 				const y0 = regions.plot.y;
 				const x1 = x0;
 				const y1 = regions.xLabels.y;
-				const x2 = x0 - xLabelsHeight;
+				const x2 = x0 - adjacent;
 				const y2 = regions.xLabels.bottom;
 				return `${x0},${y0} ${x1},${y1} ${x2},${y2}`;
 			});
@@ -147,7 +153,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			.attr(
 				'transform',
 				(skillLevel: SkillRating): string =>
-					`rotate(-45,${range(skillLevel)},${regions.xLabels.y})`,
+					`rotate(-${xLabelsRotationDegrees},${range(skillLevel)},${regions.xLabels.y})`,
 			)
 			.attr('x', range)
 			.attr('y', regions.xLabels.y + fontSize)
