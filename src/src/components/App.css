@@ -1,12 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;1,300&display=swap');
+
 body {
-	color: #333333 !important;
-	font-family: 'Open Sans';
+	color: #333333;
+	font-family: 'Source Sans Pro', sans-serif;
 	font-weight: 300;
 }
 
 h1 {
 	color: #ff7300;
-	font-size: 4rem;
+	font-size: 475%;
 	font-weight: 200;
 	line-height: 0.9;
 	margin-bottom: 0;
@@ -15,18 +17,22 @@ h1 {
 
 h2 {
 	color: #666666;
-	font-size: 1.25rem;
+	font-size: 125%;
 	font-weight: 300;
 	text-transform: uppercase;
 	white-space: nowrap;
 }
 
 header {
-	margin-top: 2rem;
+	margin-top: 2.5rem;
 }
 
 section {
-	margin-bottom: 2rem;
+	margin-bottom: 2.5rem;
+}
+
+svg text {
+	fill: currentColor;
 }
 
 .candidate-component > div {
@@ -61,7 +67,7 @@ section {
 
 .skill-ratings-chart-component {
 	font-size: 87.5%;
-	line-height: 125%;
+	line-height: 133%;
 }
 
 .skill-ratings-chart-component g.bars {
@@ -79,10 +85,6 @@ section {
 .skill-ratings-chart-component g.x-labels {
 	fill: #666666;
 	font-style: italic;
-}
-
-.skill-ratings-chart-component g.y-labels {
-	letter-spacing: -0.025rem;
 }
 
 section#experience {

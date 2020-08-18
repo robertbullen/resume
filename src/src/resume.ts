@@ -61,12 +61,18 @@ export const robert: Resume = {
 				name: 'Email',
 				url: 'mailto:robert@robertbullen.com',
 			},
-			// {
-			// 	fontAwesomeClassNames: useSquareIcons ? 'fas fa-phone-square' : 'fas fa-mobile-alt',
-			// 	handle: '952-994-6216',
-			// 	name: 'Phone',
-			// 	url: 'tel:+19529946216',
-			// },
+			{
+				fontAwesomeClassNames: useSquareIcons ? 'fab fa-dribbble-square' : 'fas fa-globe',
+				handle: 'https://robertbullen.com',
+				name: 'Website',
+				url: 'https://robertbullen.com',
+			},
+			{
+				fontAwesomeClassNames: useSquareIcons ? 'fas fa-phone-square' : 'fas fa-mobile-alt',
+				handle: '952-994-6216',
+				name: 'Phone',
+				url: 'tel:+19529946216',
+			},
 			{
 				fontAwesomeClassNames: useSquareIcons
 					? 'fab fa-github-square'
@@ -93,7 +99,11 @@ export const robert: Resume = {
 			startDate: new Date('1994-09-01'),
 		},
 		{
-			highlights: [],
+			highlights: [
+				'Architected and led the development of insurecareteams.com, an AWS serverless web application using TypeScript, React, and Express',
+				'Established a CI/CD process that integrated GitHub & CodeBuild to perform cross-account AWS deployments using either Pulumi or the AWS CDK',
+				'Fostered team knowledge transfer with regular lunch & learns',
+			],
 			organization: 'Constellation',
 			role: 'Principal Product Engineer',
 			startDate: new Date('2018-02-26'),
@@ -118,10 +128,10 @@ export const robert: Resume = {
 			{ rating: 2.0, skill: 'D3' },
 			{ rating: 4.0, skill: 'Express' },
 			{ rating: 4.0, skill: 'HTML+CSS' },
-			{ rating: 4.0, skill: 'JavaScript' },
+			{ rating: 4.5, skill: 'JavaScript' },
 			{ rating: 4.0, skill: 'Node.js' },
 			{ rating: 4.0, skill: 'OOP' },
-			{ rating: 3.5, skill: 'Python' },
+			{ rating: 2.5, skill: 'Python' },
 			{ rating: 3.0, skill: 'React' },
 			{ rating: 3.0, skill: 'SQL' },
 			{ rating: 5.0, skill: 'TypeScript' },
@@ -140,9 +150,3 @@ export const robert: Resume = {
 export interface ResumeProps {
 	resume: Resume;
 }
-
-// DevSecOps Engineer Senior Constellation
-// • Architected and led the development of insurecareteams.com, an AWS
-// serverless web application using TypeScript, React, and Express
-// • Established a CI/CD process integrating GitHub & CodeBuild to perform
-// cross-account AWS deployments using either pulumi or the AWS CDK • Fostered team knowledge transfer with regular lunch & learns
