@@ -2,31 +2,25 @@ import * as d3 from 'd3';
 import { uniqueId } from 'lodash';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import useResizeObserver from 'use-resize-observer';
-import { SkillRating, skillRatingMax } from '../resume';
+import { ResumeProps, SkillRating, skillRatingLevels, skillRatingMax } from '../resume';
 import { Rectangle } from './rectangle';
 
-interface Props {
-	skillRatings: SkillRating[];
-	sortBy?: keyof SkillRating;
-	sortDesc?: boolean;
+interface Props extends ResumeProps {
+	initialSortBy?: keyof SkillRating;
+	initialSortDesc?: boolean;
+	skillCategory: string;
 }
 
 export const SkillRatingsChart: FC<Props> = (props: Props) => {
-	// Declare some helpful skill values.
-	const skillLevels = useMemo(
-		(): SkillRating[] => [
-			{ rating: skillRatingMax * 0.1, skill: 'Capable' },
-			{ rating: skillRatingMax * 0.5, skill: 'Proficient' },
-			{ rating: skillRatingMax * 0.9, skill: 'Expert' },
-			// { rating: 0, skill: '0' },
-			// { rating: 1, skill: '1' },
-			// { rating: 2, skill: '2' },
-			// { rating: 3, skill: '3' },
-			// { rating: 4, skill: '4' },
-			// { rating: 5, skill: '5' },
-		],
-		[],
-	);
+	// Declare some helpful skill variables.
+	const skillRatings: SkillRating[] | undefined = props.resume.skills[props.skillCategory];
+	if (!skillRatings) {
+		throw new Error(
+			`Invalid skill category key \`props.skillCategory\`: '${props.skillCategory}'`,
+		);
+	}
+
+	const skillLevels: SkillRating[] = useMemo(skillRatingLevels, []);
 
 	// Declare some variables for dynamic (re)sizing.
 	const { ref, width } = useResizeObserver<HTMLDivElement>();
@@ -42,8 +36,8 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 
 	const xLabelsRotationDegrees = 30;
 
-	// TODO: These two values should be dynamically determined by using a Canvas context to measure
-	// precisely the dimensions that are needed.
+	// TODO: These two values should be dynamically calculated using a Canvas context to measure
+	// the extents of strings contained within them.
 	const xLabelsHeight = lineHeight * 2.5;
 	const yLabelsWidth = lineHeight * 6;
 
@@ -59,7 +53,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			x: 0,
 			y: 0,
 			width,
-			height: props.skillRatings.length * lineHeight + plotRegionMargin + xLabelsHeight,
+			height: skillRatings.length * lineHeight + plotRegionMargin + xLabelsHeight,
 		});
 
 		const plot = new Rectangle({
@@ -89,11 +83,11 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			xLabels,
 			yLabels,
 		};
-	}, [fontSize, lineHeight, props.skillRatings.length, width, xLabelsHeight, yLabelsWidth]);
+	}, [fontSize, lineHeight, skillRatings.length, width, xLabelsHeight, yLabelsWidth]);
 
 	// Declare some state and a function for sorting.
-	const [sortBy, setSortBy] = useState<keyof SkillRating>(props.sortBy ?? 'skill');
-	const [sortDesc, setSortDesc] = useState<boolean>(props.sortDesc ?? sortBy === 'rating');
+	const [sortBy, setSortBy] = useState<keyof SkillRating>(props.initialSortBy ?? 'skill');
+	const [sortDesc, setSortDesc] = useState<boolean>(props.initialSortDesc ?? sortBy === 'rating');
 
 	const sortComparer = useCallback(
 		(left: SkillRating, right: SkillRating): number => {
@@ -187,7 +181,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			.text(skill);
 
 		// Draw the y-axis labels and bars.
-		const sortedSkillRatings = props.skillRatings.slice().sort(sortComparer);
+		const sortedSkillRatings = skillRatings.slice().sort(sortComparer);
 
 		const durationShortMilliseconds = 500;
 		const durationLongMilliseconds = 2000;
@@ -260,10 +254,10 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 	}, [
 		fontSize,
 		lineHeight,
-		props.skillRatings,
 		ref,
 		regions,
 		skillLevels,
+		skillRatings,
 		sortComparer,
 		xLabelsHeight,
 	]);

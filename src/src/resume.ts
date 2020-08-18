@@ -17,10 +17,24 @@ export interface SkillRating {
 
 export const skillRatingMax = 5;
 
-export type SkillCategoriesRecord = Record<string, SkillRating[]>;
+export function skillRatingLevels(): SkillRating[] {
+	return [
+		{ rating: 0.5, skill: 'Capable' },
+		{ rating: 2.5, skill: 'Proficient' },
+		{ rating: 4.5, skill: 'Expert' },
+		// { rating: 0, skill: '0' },
+		// { rating: 1, skill: '1' },
+		// { rating: 2, skill: '2' },
+		// { rating: 3, skill: '3' },
+		// { rating: 4, skill: '4' },
+		// { rating: 5, skill: '5' },
+	];
+}
+
+export type SkillCategoriesRecord = Record<string, SkillRating[] | undefined>;
 
 export interface Experience {
-	finishDate: Date;
+	finishDate?: Date;
 	highlights: string[];
 	organization: string;
 	role: string;
@@ -77,6 +91,12 @@ export const robert: Resume = {
 			organization: 'University of Minnesota, I.T.',
 			role: 'B.S. in Computer Science',
 			startDate: new Date('1994-09-01'),
+		},
+		{
+			highlights: [],
+			organization: 'Constellation',
+			role: 'Principal Product Engineer',
+			startDate: new Date('2018-02-26'),
 		},
 	],
 	mission:
