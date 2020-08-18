@@ -1,11 +1,12 @@
 body {
 	color: #333333 !important;
+	font-family: 'Open Sans';
 	font-weight: 300;
 }
 
 h1 {
 	color: #ff7300;
-	font-size: 4.5rem;
+	font-size: 4rem;
 	font-weight: 200;
 	line-height: 0.9;
 	margin-bottom: 0;
@@ -63,7 +64,7 @@ section {
 	line-height: 125%;
 }
 
-.skill-ratings-chart-component g.bars rect {
+.skill-ratings-chart-component g.bars {
 	fill: #ff7300;
 }
 
@@ -71,15 +72,40 @@ section {
 	opacity: 0.5;
 }
 
-.skill-ratings-chart-component g.x-grid polyline {
+.skill-ratings-chart-component g.x-grid {
 	stroke: #666666;
 }
 
-.skill-ratings-chart-component g.x-labels text {
+.skill-ratings-chart-component g.x-labels {
 	fill: #666666;
 	font-style: italic;
 }
 
-.skill-ratings-chart-component g.y-labels text {
+.skill-ratings-chart-component g.y-labels {
 	letter-spacing: -0.025rem;
+}
+
+section#experience {
+	height: 100%;
+}
+
+.experience-timeline-component {
+	height: 100%;
+}
+
+.experience-timeline-component g.year-grid {
+	opacity: 0.1;
+}
+
+.experience-timeline-component g.year-grid .solid {
+	fill: #666666;
+}
+
+.experience-timeline-component g.year-grid .empty {
+	fill: none;
+}
+
+.experience-timeline-component g.year-labels {
+	font-family: 'Open Sans';
+	font-size: 75%;
 }

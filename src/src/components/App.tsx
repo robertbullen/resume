@@ -1,9 +1,10 @@
 import React, { FC } from 'react';
 import { Col, Container, Row } from 'reactstrap';
 import { useResume } from '../hooks/use-resume';
-import { Resume, SkillRating } from '../resume';
+import { Resume } from '../resume';
 import './App.css';
 import { Candidate } from './Candidate';
+import { ExperienceTimeline } from './ExperienceTimeline';
 import { Mission } from './Mission';
 import { generateSectionId, Section } from './Section';
 import { SkillRatingsChart } from './SkillRatingsChart';
@@ -44,26 +45,24 @@ const App: FC = () => {
 								</Col>
 							</Row>
 							<Row>
-								{Object.entries(resume.skills).map(
-									(
-										[category, skillRatings]: [string, SkillRating[]],
-										skillCategoryIndex: number,
-									) => (
-										<Col key={skillCategoryIndex} md={6} xs={12}>
-											<Section
-												heading={category}
-												id={generateSectionId(category)}
-											>
-												<SkillRatingsChart skillRatings={skillRatings} />
-											</Section>
-										</Col>
-									),
-								)}
+								{Object.keys(resume.skills).map((skillCategory: string) => (
+									<Col key={skillCategory} md={6} xs={12}>
+										<Section
+											heading={skillCategory}
+											id={generateSectionId(skillCategory)}
+										>
+											<SkillRatingsChart
+												resume={resume}
+												skillCategory={skillCategory}
+											/>
+										</Section>
+									</Col>
+								))}
 							</Row>
 						</Col>
 						<Col xl={6} xs={12}>
 							<Section heading="Experience" id="experience">
-								TODO: Timeline
+								<ExperienceTimeline resume={resume} />
 							</Section>
 						</Col>
 					</Row>
