@@ -166,8 +166,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			.text(skill);
 
 		// Draw the y-axis labels and bars.
-		type Comparer = Parameters<Array<SkillRating>['sort']>[0];
-		const comparer: Comparer = (left: SkillRating, right: SkillRating): number => {
+		function comparer(left: SkillRating, right: SkillRating): number {
 			let result: number =
 				sortBy === 'rating' && left.rating !== right.rating
 					? left.rating - right.rating
@@ -176,8 +175,11 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 				result = -result;
 			}
 			return result;
-		};
+		}
 		const sortedSkillRatings = props.skillRatings.slice().sort(comparer);
+
+		const shortDurationMilliseconds = 500;
+		const longDurationMilliseconds = 2000;
 
 		function yLabelY(_skillRating: SkillRating, skillIndex: number): number {
 			return skillIndex * lineHeight + fontSize;
@@ -198,7 +200,9 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 						.attr('y', yLabelY)
 						.text(skill),
 				(update) =>
-					update.call((update) => update.transition().duration(500).attr('y', yLabelY)),
+					update.call((update) =>
+						update.transition().duration(shortDurationMilliseconds).attr('y', yLabelY),
+					),
 			);
 
 		function barY(_skillRating: SkillRating, skillIndex: number): number {
@@ -223,9 +227,16 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 						.attr('width', 0)
 						.attr('x', scale(0))
 						.attr('y', barY)
-						.call((enter) => enter.transition().duration(2000).attr('width', barWidth)),
+						.call((enter) =>
+							enter
+								.transition()
+								.duration(longDurationMilliseconds)
+								.attr('width', barWidth),
+						),
 				(update) =>
-					update.call((update) => update.transition().duration(500).attr('y', barY)),
+					update.call((update) =>
+						update.transition().duration(shortDurationMilliseconds).attr('y', barY),
+					),
 			);
 	}, [
 		fontSize,
