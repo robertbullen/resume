@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import { uniqueId } from 'lodash';
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import useResizeObserver from 'use-resize-observer';
 import { SkillRating, skillRatingMax } from '../resume';
 import { Rectangle } from './rectangle';
@@ -28,7 +28,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 		[],
 	);
 
-	// Declare some constants for sizing.
+	// Declare some variables for dynamic (re)sizing.
 	const { ref, width } = useResizeObserver<HTMLDivElement>();
 
 	const computedStyle: CSSStyleDeclaration | null =
@@ -40,17 +40,20 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 		? Number.parseFloat(computedStyle.getPropertyValue('line-height'))
 		: fontSize * 1.25;
 
-	const plotRegionMargin = fontSize / 2;
 	const xLabelsRotationDegrees = 30;
+
+	// TODO: These two values should be dynamically determined by using a Canvas context to measure
+	// precisely the dimensions that are needed.
 	const xLabelsHeight = lineHeight * 2.5;
 	const yLabelsWidth = lineHeight * 6;
 
 	type Regions = Record<'chart' | 'plot' | 'xLabels' | 'yLabels', Rectangle>;
-
 	const regions = useMemo((): Regions | undefined => {
 		if (!width) {
 			return undefined;
 		}
+
+		const plotRegionMargin = fontSize / 2;
 
 		const chart = new Rectangle({
 			x: 0,
@@ -86,24 +89,36 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			xLabels,
 			yLabels,
 		};
-	}, [
-		lineHeight,
-		plotRegionMargin,
-		props.skillRatings.length,
-		width,
-		xLabelsHeight,
-		yLabelsWidth,
-	]);
+	}, [fontSize, lineHeight, props.skillRatings.length, width, xLabelsHeight, yLabelsWidth]);
 
+	// Declare some state and a function for sorting.
 	const [sortBy, setSortBy] = useState<keyof SkillRating>(props.sortBy ?? 'skill');
 	const [sortDesc, setSortDesc] = useState<boolean>(props.sortDesc ?? sortBy === 'rating');
 
+	const sortComparer = useCallback(
+		(left: SkillRating, right: SkillRating): number => {
+			let result: number =
+				sortBy === 'rating' && left.rating !== right.rating
+					? left.rating - right.rating
+					: left.skill.localeCompare(right.skill);
+			if (sortDesc) {
+				result = -result;
+			}
+			return result;
+		},
+		[sortBy, sortDesc],
+	);
+
 	useEffect((): void => {
+		// Ensure that the necessary pieces are defined.
 		if (!ref.current || !regions) {
 			return;
 		}
 
-		// Initialize functions for plotting.
+		// Initialize a D3 starting point with the component root.
+		const container = d3.select(ref.current);
+
+		// Initialize general purpose functions for plotting.
 		const scale = d3
 			.scaleLinear()
 			.domain([0, skillRatingMax])
@@ -121,13 +136,26 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			return skillRating.skill;
 		}
 
-		const container = d3.select(ref.current);
+		// Draw the grid and x-axis labels.
 
-		// Draw the grid. Tails are the hypotenuse of a triangle having height of xLabelsHeight and
-		// width of xGridTailOffset, which is calculated here as `adjacent = opposite / tan(θ)`.
-		const opposite = xLabelsHeight;
-		const theta = (xLabelsRotationDegrees * Math.PI) / 180;
-		const adjacent = opposite / Math.tan(theta);
+		// The grid lines have "tails" (a.k.a. axis marks) that extend downward from the plot
+		// region into the x-axis labels region. The tails are the hypotenuse of a right triangle
+		// having height `opposite` and angle `theta` (counter-clockwise radians from 9 o'clock).
+		// This function calculates the polyline points of a single grid line.
+		function xGridPoints(skillLevel: SkillRating): string {
+			const opposite = xLabelsHeight;
+			const theta = (xLabelsRotationDegrees * Math.PI) / 180;
+			const adjacent = opposite / Math.tan(theta);
+
+			const x0 = range(skillLevel);
+			const y0 = regions!.plot.y;
+			const x1 = x0;
+			const y1 = regions!.xLabels.y;
+			const x2 = x0 - adjacent;
+			const y2 = regions!.xLabels.bottom;
+
+			return `${x0},${y0} ${x1},${y1} ${x2},${y2}`;
+		}
 
 		container
 			.select('g.x-grid')
@@ -137,17 +165,14 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			.attr('data-level', skill)
 			.attr('data-rating', rating)
 			.attr('fill', 'none')
-			.attr('points', (skillLevel: SkillRating): string => {
-				const x0 = range(skillLevel);
-				const y0 = regions.plot.y;
-				const x1 = x0;
-				const y1 = regions.xLabels.y;
-				const x2 = x0 - adjacent;
-				const y2 = regions.xLabels.bottom;
-				return `${x0},${y0} ${x1},${y1} ${x2},${y2}`;
-			});
+			.attr('points', xGridPoints);
 
-		// Draw the x-axis labels.
+		function xLabelTransform(skillLevel: SkillRating): string {
+			return `rotate(-${xLabelsRotationDegrees},${range(skillLevel)},${regions!.xLabels.y})`;
+		}
+
+		const xLabelY = regions.xLabels.y + fontSize;
+
 		container
 			.select('g.x-labels')
 			.selectAll('text')
@@ -156,30 +181,18 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			.attr('data-level', skill)
 			.attr('data-rating', rating)
 			.attr('text-anchor', 'end')
-			.attr(
-				'transform',
-				(skillLevel: SkillRating): string =>
-					`rotate(-${xLabelsRotationDegrees},${range(skillLevel)},${regions.xLabels.y})`,
-			)
+			.attr('transform', xLabelTransform)
 			.attr('x', range)
-			.attr('y', regions.xLabels.y + fontSize)
+			.attr('y', xLabelY)
 			.text(skill);
 
 		// Draw the y-axis labels and bars.
-		function comparer(left: SkillRating, right: SkillRating): number {
-			let result: number =
-				sortBy === 'rating' && left.rating !== right.rating
-					? left.rating - right.rating
-					: left.skill.localeCompare(right.skill);
-			if (sortDesc) {
-				result = -result;
-			}
-			return result;
-		}
-		const sortedSkillRatings = props.skillRatings.slice().sort(comparer);
+		const sortedSkillRatings = props.skillRatings.slice().sort(sortComparer);
 
-		const shortDurationMilliseconds = 500;
-		const longDurationMilliseconds = 2000;
+		const durationShortMilliseconds = 500;
+		const durationLongMilliseconds = 2000;
+
+		const yLabelX = regions.yLabels.right;
 
 		function yLabelY(_skillRating: SkillRating, skillIndex: number): number {
 			return skillIndex * lineHeight + fontSize;
@@ -196,14 +209,16 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 						.attr('data-skill', skill)
 						.attr('data-rating', rating)
 						.attr('text-anchor', 'end')
-						.attr('x', regions.yLabels.right)
+						.attr('x', yLabelX)
 						.attr('y', yLabelY)
 						.text(skill),
 				(update) =>
 					update.call((update) =>
-						update.transition().duration(shortDurationMilliseconds).attr('y', yLabelY),
+						update.transition().duration(durationShortMilliseconds).attr('y', yLabelY),
 					),
 			);
+
+		const barHeight = fontSize * 0.75;
 
 		function barY(_skillRating: SkillRating, skillIndex: number): number {
 			return skillIndex * lineHeight + fontSize * 0.3;
@@ -223,19 +238,23 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 						.append('rect')
 						.attr('data-skill', skill)
 						.attr('data-rating', rating)
-						.attr('height', fontSize * 0.75)
+						.attr('height', barHeight)
 						.attr('width', 0)
 						.attr('x', scale(0))
 						.attr('y', barY)
 						.call((enter) =>
 							enter
 								.transition()
-								.duration(longDurationMilliseconds)
+								.duration(durationLongMilliseconds)
 								.attr('width', barWidth),
 						),
 				(update) =>
 					update.call((update) =>
-						update.transition().duration(shortDurationMilliseconds).attr('y', barY),
+						update
+							.attr('width', barWidth)
+							.transition()
+							.duration(durationShortMilliseconds)
+							.attr('y', barY),
 					),
 			);
 	}, [
@@ -245,8 +264,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 		ref,
 		regions,
 		skillLevels,
-		sortBy,
-		sortDesc,
+		sortComparer,
 		xLabelsHeight,
 	]);
 

@@ -82,6 +82,18 @@ export const robert: Resume = {
 	mission:
 		'Robert leverages his analytical and creative talents to the fullest when designing and writing modern full stack applications. He is enthusiastic and experienced when it comes to discovering promising software development technologies and adopting best practices.',
 	skills: {
+		'Soft Skills': [
+			{ rating: 4.0, skill: 'End User Focus' },
+			{ rating: 4.0, skill: 'Communication' },
+			{ rating: 4.0, skill: 'Cont. Learning' },
+			{ rating: 4.0, skill: 'Mentorship' },
+		],
+		'Architecture & Design': [
+			{ rating: 3.5, skill: 'AWS' },
+			{ rating: 3.5, skill: 'CI/CD' },
+			{ rating: 4.5, skill: 'Design Patterns' },
+			{ rating: 3.5, skill: 'REST' },
+		],
 		'Software Engineering': [
 			{ rating: 2.0, skill: 'D3' },
 			{ rating: 4.0, skill: 'Express' },
@@ -89,21 +101,12 @@ export const robert: Resume = {
 			{ rating: 4.0, skill: 'JavaScript' },
 			{ rating: 4.0, skill: 'Node.js' },
 			{ rating: 4.0, skill: 'OOP' },
+			{ rating: 3.5, skill: 'Python' },
 			{ rating: 3.0, skill: 'React' },
 			{ rating: 3.0, skill: 'SQL' },
 			{ rating: 5.0, skill: 'TypeScript' },
 			{ rating: 4.0, skill: 'Unit Testing' },
 			{ rating: 3.0, skill: 'Vue' },
-		],
-		'Architecture & Leadership': [
-			{ rating: 4.0, skill: 'AWS' },
-			{ rating: 3.5, skill: 'CI/CD' },
-			{ rating: 3.5, skill: 'REST' },
-			{ rating: 4.0, skill: 'End User Focus' },
-			{ rating: 4.5, skill: 'Design Patterns' },
-			{ rating: 4.0, skill: 'Communication' },
-			{ rating: 4.0, skill: 'Cont. Learning' },
-			{ rating: 4.0, skill: 'Mentorship' },
 		],
 		'Packet Analysis': [
 			{ rating: 5.0, skill: 'TCP/IP' },
