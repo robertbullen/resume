@@ -63,24 +63,23 @@ section {
 	line-height: 125%;
 }
 
-g.bars rect {
+.skill-ratings-chart-component g.bars rect {
 	fill: #ff7300;
 }
 
-g.x-grid {
+.skill-ratings-chart-component g.x-grid {
 	opacity: 0.5;
 }
 
-g.x-grid polyline {
+.skill-ratings-chart-component g.x-grid polyline {
 	stroke: #666666;
 }
 
-g.x-labels text {
+.skill-ratings-chart-component g.x-labels text {
 	fill: #666666;
 	font-style: italic;
-	font-weight: 300;
 }
 
-g.y-labels text {
-	font-weight: 300;
+.skill-ratings-chart-component g.y-labels text {
+	letter-spacing: -0.025rem;
 }

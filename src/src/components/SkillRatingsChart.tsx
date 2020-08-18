@@ -15,9 +15,15 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 	// Declare some helpful skill values.
 	const skillLevels = useMemo(
 		(): SkillRating[] => [
-			{ rating: skillRatingMax * 0.15, skill: 'Capable' },
+			{ rating: skillRatingMax * 0.1, skill: 'Capable' },
 			{ rating: skillRatingMax * 0.5, skill: 'Proficient' },
-			{ rating: skillRatingMax * 0.85, skill: 'Expert' },
+			{ rating: skillRatingMax * 0.9, skill: 'Expert' },
+			// { rating: 0, skill: '0' },
+			// { rating: 1, skill: '1' },
+			// { rating: 2, skill: '2' },
+			// { rating: 3, skill: '3' },
+			// { rating: 4, skill: '4' },
+			// { rating: 5, skill: '5' },
 		],
 		[],
 	);
@@ -37,7 +43,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 	const plotRegionMargin = fontSize / 2;
 	const xLabelsRotationDegrees = 30;
 	const xLabelsHeight = lineHeight * 2.5;
-	const yLabelsWidth = lineHeight * 4.5;
+	const yLabelsWidth = lineHeight * 6;
 
 	type Regions = Record<'chart' | 'plot' | 'xLabels' | 'yLabels', Rectangle>;
 
@@ -163,7 +169,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 		type Comparer = Parameters<Array<SkillRating>['sort']>[0];
 		const comparer: Comparer = (left: SkillRating, right: SkillRating): number => {
 			let result: number =
-				sortBy === 'rating'
+				sortBy === 'rating' && left.rating !== right.rating
 					? left.rating - right.rating
 					: left.skill.localeCompare(right.skill);
 			if (sortDesc) {
@@ -173,27 +179,54 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 		};
 		const sortedSkillRatings = props.skillRatings.slice().sort(comparer);
 
+		function yLabelY(_skillRating: SkillRating, skillIndex: number): number {
+			return skillIndex * lineHeight + fontSize;
+		}
+
 		container
 			.select('g.y-labels')
-			.selectAll('text')
-			.data(sortedSkillRatings)
-			.join('text')
-			.attr('text-anchor', 'end')
-			.attr('x', regions.yLabels.right)
-			.attr('y', (_, skillIndex: number): number => skillIndex * lineHeight + fontSize)
-			.text(skill);
+			.selectAll<SVGTextElement, SkillRating>('text')
+			.data(sortedSkillRatings, skill)
+			.join(
+				(enter) =>
+					enter
+						.append('text')
+						.attr('data-skill', skill)
+						.attr('data-rating', rating)
+						.attr('text-anchor', 'end')
+						.attr('x', regions.yLabels.right)
+						.attr('y', yLabelY)
+						.text(skill),
+				(update) =>
+					update.call((update) => update.transition().duration(500).attr('y', yLabelY)),
+			);
+
+		function barY(_skillRating: SkillRating, skillIndex: number): number {
+			return skillIndex * lineHeight + fontSize * 0.3;
+		}
+
+		function barWidth(skillRating: SkillRating): number {
+			return range(skillRating) - scale(0);
+		}
 
 		container
 			.select('g.bars')
-			.selectAll('rect')
-			.data(sortedSkillRatings)
-			.join('rect')
-			.attr('data-skill', skill)
-			.attr('data-rating', rating)
-			.attr('height', fontSize * 0.75)
-			.attr('width', (skillRating: SkillRating): number => range(skillRating) - scale(0))
-			.attr('x', scale(0))
-			.attr('y', (_, skillIndex: number): number => skillIndex * lineHeight + fontSize * 0.3);
+			.selectAll<SVGRectElement, SkillRating>('rect')
+			.data(sortedSkillRatings, skill)
+			.join(
+				(enter) =>
+					enter
+						.append('rect')
+						.attr('data-skill', skill)
+						.attr('data-rating', rating)
+						.attr('height', fontSize * 0.75)
+						.attr('width', 0)
+						.attr('x', scale(0))
+						.attr('y', barY)
+						.call((enter) => enter.transition().duration(2000).attr('width', barWidth)),
+				(update) =>
+					update.call((update) => update.transition().duration(500).attr('y', barY)),
+			);
 	}, [
 		fontSize,
 		lineHeight,
