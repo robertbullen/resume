@@ -52,7 +52,7 @@ export const ExperienceTimeline: FC<Props> = (props: Props) => {
 			.range([height ?? 0, 0]);
 
 		function yearBoxClass(_year: Date, yearIndex: number): string {
-			return yearIndex % 2 === 0 ? 'solid' : 'empty';
+			return yearIndex % 2 === 0 ? 'dark' : 'light';
 		}
 
 		// TODO: check for array length

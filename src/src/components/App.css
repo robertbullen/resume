@@ -1,22 +1,40 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;1,300&display=swap');
 
+:root {
+	--color-background: white;
+	--color-accent: #ff7300;
+	--color-low-contrast: #888888;
+	--color-high-contrast: #444444;
+
+	/* --color-background: #333333;
+	--color-accent: #5777c0;
+	--color-low-contrast: #999999;
+	--color-high-contrast: #dddddd; */
+
+	--content-margin: 2rem;
+	--font-size-smaller: 87.5%;
+}
+
 body {
-	color: #333333;
+	background-color: var(--color-background);
+	color: var(--color-high-contrast);
 	font-family: 'Source Sans Pro', sans-serif;
 	font-weight: 300;
 }
 
 h1 {
-	color: #ff7300;
-	font-size: 475%;
+	color: var(--color-accent);
 	font-weight: 200;
-	line-height: 0.9;
-	margin-bottom: 0;
+	letter-spacing: -0.045em;
+	line-height: 100%;
+	margin: -0.09em 0 0 -0.09em;
+	max-height: 6rem;
 	text-transform: uppercase;
+	--canvas-measure-compensation: 0.94;
 }
 
 h2 {
-	color: #666666;
+	color: var(--color-low-contrast);
 	font-size: 133%;
 	font-weight: 300;
 	text-transform: uppercase;
@@ -24,15 +42,11 @@ h2 {
 }
 
 header {
-	margin-top: 2.5rem;
+	margin-top: var(--content-margin);
 }
 
 section {
-	margin-bottom: 2.5rem;
-}
-
-svg text {
-	fill: currentColor;
+	margin-bottom: var(--content-margin);
 }
 
 .candidate-component > div {
@@ -42,22 +56,23 @@ svg text {
 .candidate-component > div > ul {
 	display: flex;
 	flex-wrap: wrap;
-	justify-content: space-between;
 	list-style-type: none;
 	margin-bottom: 0;
 	padding-left: 0;
 }
 
-.candidate-component > div > ul > li:not(:last-child) {
-	margin-right: 1rem;
+.candidate-component > div > ul > li {
+	font-size: var(--font-size-smaller);
+	margin-right: var(--content-margin);
 }
 
 .candidate-contact-service-component a {
-	color: #666666;
+	color: var(--color-high-contrast);
 	white-space: nowrap;
 }
 
 .candidate-contact-service-component a > i {
+	color: var(--color-low-contrast);
 	margin-right: 0.25rem;
 }
 
@@ -66,25 +81,29 @@ svg text {
 }
 
 .skill-ratings-chart-component {
-	font-size: 87.5%;
+	font-size: var(--font-size-smaller);
 	line-height: 133%;
 }
 
-.skill-ratings-chart-component g.bars {
-	fill: #ff7300;
+.skill-ratings-chart-component g.bars rect {
+	fill: var(--color-accent);
 }
 
 .skill-ratings-chart-component g.x-grid {
 	opacity: 0.5;
 }
 
-.skill-ratings-chart-component g.x-grid {
-	stroke: #666666;
+.skill-ratings-chart-component g.x-grid polyline {
+	stroke: var(--color-low-contrast);
 }
 
 .skill-ratings-chart-component g.x-labels {
-	fill: #666666;
+	fill: var(--color-low-contrast);
 	font-style: italic;
+}
+
+.skill-ratings-chart-component g.y-labels {
+	fill: var(--color-high-contrast);
 }
 
 section#experience {
@@ -99,15 +118,15 @@ section#experience {
 	opacity: 0.1;
 }
 
-.experience-timeline-component g.year-grid .solid {
-	fill: #666666;
+.experience-timeline-component g.year-grid rect.dark {
+	fill: var(--color-low-contrast);
 }
 
-.experience-timeline-component g.year-grid .empty {
+.experience-timeline-component g.year-grid rect.light {
 	fill: none;
 }
 
 .experience-timeline-component g.year-labels {
-	font-family: 'Open Sans';
-	font-size: 75%;
+	fill: var(--color-low-contrast);
+	font-size: var(--font-size-smaller);
 }

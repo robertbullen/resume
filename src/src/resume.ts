@@ -15,6 +15,14 @@ export interface SkillRating {
 	skill: string;
 }
 
+export function getRating(skillRating: SkillRating): number {
+	return skillRating.rating;
+}
+
+export function getSkill(skillRating: SkillRating): string {
+	return skillRating.skill;
+}
+
 export const skillRatingMax = 5;
 
 export function skillRatingLevels(): SkillRating[] {
@@ -54,6 +62,12 @@ export const robert: Resume = {
 	candidate: {
 		contactServices: [
 			{
+				fontAwesomeClassNames: useSquareIcons ? 'fas fa-phone-square' : 'fas fa-mobile-alt',
+				handle: '952-994-6216',
+				name: 'Phone',
+				url: 'tel:+19529946216',
+			},
+			{
 				fontAwesomeClassNames: useSquareIcons
 					? 'fas fa-envelope-square'
 					: 'fas fa-envelope',
@@ -66,12 +80,6 @@ export const robert: Resume = {
 				handle: 'https://robertbullen.com',
 				name: 'Website',
 				url: 'https://robertbullen.com',
-			},
-			{
-				fontAwesomeClassNames: useSquareIcons ? 'fas fa-phone-square' : 'fas fa-mobile-alt',
-				handle: '952-994-6216',
-				name: 'Phone',
-				url: 'tel:+19529946216',
 			},
 			{
 				fontAwesomeClassNames: useSquareIcons
@@ -117,6 +125,7 @@ export const robert: Resume = {
 			{ rating: 4.0, skill: 'Communication' },
 			{ rating: 4.0, skill: 'Cont. Learning' },
 			{ rating: 4.0, skill: 'Mentorship' },
+			{ rating: 4.0, skill: 'Presenting' },
 		],
 		'Architecture & Design': [
 			{ rating: 3.5, skill: 'AWS' },

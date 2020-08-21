@@ -2,8 +2,23 @@ import * as d3 from 'd3';
 import { uniqueId } from 'lodash';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import useResizeObserver from 'use-resize-observer';
-import { ResumeProps, SkillRating, skillRatingLevels, skillRatingMax } from '../resume';
+import {
+	getRating,
+	getSkill,
+	ResumeProps,
+	SkillRating,
+	skillRatingLevels,
+	skillRatingMax,
+} from '../resume';
 import { Rectangle } from './rectangle';
+
+const debug = false;
+
+const durationShortMilliseconds = 500;
+const durationLongMilliseconds = 2000;
+
+const xLabelsRotateDegrees = -30;
+const xLabelsRotateRadians = (xLabelsRotateDegrees * Math.PI) / 180;
 
 interface Props extends ResumeProps {
 	initialSortBy?: keyof SkillRating;
@@ -20,70 +35,18 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 		);
 	}
 
-	const skillLevels: SkillRating[] = useMemo(skillRatingLevels, []);
+	const allSkills = useMemo(
+		(): string[] =>
+			Object.values(
+				props.resume.skills,
+			).flatMap((innerSkillRatings: SkillRating[] | undefined) =>
+				(innerSkillRatings ?? []).map(getSkill),
+			),
+		[props.resume.skills],
+	);
 
-	// Declare some variables for dynamic (re)sizing.
-	const { ref, width } = useResizeObserver<HTMLDivElement>();
-
-	const computedStyle: CSSStyleDeclaration | null =
-		ref.current && window.getComputedStyle(ref.current);
-	const fontSize: number = computedStyle
-		? Number.parseFloat(computedStyle.getPropertyValue('font-size'))
-		: 14;
-	const lineHeight: number = computedStyle
-		? Number.parseFloat(computedStyle.getPropertyValue('line-height'))
-		: fontSize * 1.25;
-
-	const xLabelsRotationDegrees = 30;
-
-	// TODO: These two values should be dynamically calculated using a Canvas context to measure
-	// the extents of strings contained within them.
-	const xLabelsHeight = lineHeight * 2.5;
-	const yLabelsWidth = lineHeight * 6;
-
-	type Regions = Record<'chart' | 'plot' | 'xLabels' | 'yLabels', Rectangle>;
-	const regions = useMemo((): Regions | undefined => {
-		if (!width) {
-			return undefined;
-		}
-
-		const plotRegionMargin = fontSize / 2;
-
-		const chart = new Rectangle({
-			x: 0,
-			y: 0,
-			width,
-			height: skillRatings.length * lineHeight + plotRegionMargin + xLabelsHeight,
-		});
-
-		const plot = new Rectangle({
-			x: chart.x + yLabelsWidth + plotRegionMargin,
-			y: chart.y,
-			width: chart.width - yLabelsWidth - plotRegionMargin,
-			height: chart.height - xLabelsHeight - plotRegionMargin,
-		});
-
-		const yLabels = new Rectangle({
-			x: chart.x,
-			y: chart.y,
-			width: yLabelsWidth,
-			height: chart.height - xLabelsHeight - plotRegionMargin,
-		});
-
-		const xLabels = new Rectangle({
-			x: chart.x + yLabelsWidth + plotRegionMargin,
-			y: chart.bottom - xLabelsHeight,
-			width: chart.width - yLabelsWidth - plotRegionMargin,
-			height: xLabelsHeight,
-		});
-
-		return {
-			chart,
-			plot,
-			xLabels,
-			yLabels,
-		};
-	}, [fontSize, lineHeight, skillRatings.length, width, xLabelsHeight, yLabelsWidth]);
+	const skillLevels: SkillRating[] = useMemo(skillRatingLevels, [skillRatingLevels]);
+	const allLevels = useMemo((): string[] => skillLevels.map(getSkill), [skillLevels]);
 
 	// Declare some state and a function for sorting.
 	const [sortBy, setSortBy] = useState<keyof SkillRating>(props.initialSortBy ?? 'skill');
@@ -103,138 +66,289 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 		[sortBy, sortDesc],
 	);
 
+	const sortedSkillRatings = useMemo(
+		(): SkillRating[] => skillRatings.slice().sort(sortComparer),
+		[skillRatings, sortComparer],
+	);
+
+	// Declare some variables for dynamic (re)sizing.
+	const { ref: divRef, width } = useResizeObserver<HTMLDivElement>();
+	const div: HTMLDivElement | null = divRef.current;
+
+	const [xLabelsGroup, setXLabelsGroup] = useState<SVGGElement | null>(null);
+	const xLabelsGroupRef = useCallback(setXLabelsGroup, []);
+
+	const [yLabelsGroup, setYLabelsGroup] = useState<SVGGElement | null>(null);
+	const yLabelsGroupRef = useCallback(setYLabelsGroup, []);
+
+	interface MeasurementFactors {
+		context: CanvasRenderingContext2D;
+		xLabelsFont: string;
+		xLabelsFontSize: number;
+		yLabelsFont: string;
+		yLabelsFontSize: number;
+		yLabelsLineHeight: number;
+	}
+	const measurementFactors = useMemo((): MeasurementFactors | undefined => {
+		let result: MeasurementFactors | undefined;
+		if (xLabelsGroup && yLabelsGroup) {
+			const context: CanvasRenderingContext2D | null = document
+				.createElement('canvas')
+				.getContext('2d');
+			if (context) {
+				const xLabelsStyle: CSSStyleDeclaration = window.getComputedStyle(xLabelsGroup);
+				const yLabelsStyle: CSSStyleDeclaration = window.getComputedStyle(yLabelsGroup);
+				result = {
+					context,
+					xLabelsFont: xLabelsStyle.font,
+					xLabelsFontSize: Number.parseFloat(xLabelsStyle.fontSize),
+					yLabelsFont: yLabelsStyle.font,
+					yLabelsFontSize: Number.parseFloat(yLabelsStyle.fontSize),
+					yLabelsLineHeight: Number.parseFloat(yLabelsStyle.lineHeight),
+				};
+				if (debug) {
+					console.log({ measurementFactors: result });
+				}
+			}
+		}
+		return result;
+	}, [xLabelsGroup, yLabelsGroup]);
+
+	type Regions = Record<'chart' | 'plot' | 'xLabels' | 'yLabels', Rectangle>;
+	const regions = useMemo((): Regions | undefined => {
+		let result: Regions | undefined;
+		if (measurementFactors && width !== undefined) {
+			// Determine the y-labels width.
+			measurementFactors.context.font = measurementFactors.yLabelsFont;
+			let skillWidthMax = 0;
+			for (const skill of allSkills) {
+				const metrics: TextMetrics = measurementFactors.context.measureText(skill);
+				skillWidthMax = Math.max(
+					skillWidthMax,
+					metrics.width,
+					metrics.actualBoundingBoxRight - metrics.actualBoundingBoxLeft,
+				);
+			}
+			const yLabelsWidth = Math.ceil(Math.min(skillWidthMax, width / 2));
+
+			// Determine the x-labels height.
+			measurementFactors.context.font = measurementFactors.xLabelsFont;
+			let levelWidthMax = 0;
+			for (const level of allLevels) {
+				const metrics: TextMetrics = measurementFactors.context.measureText(level);
+				levelWidthMax = Math.max(
+					levelWidthMax,
+					metrics.width,
+					metrics.actualBoundingBoxRight - metrics.actualBoundingBoxLeft,
+				);
+			}
+
+			const adjacent = Math.abs(
+				Math.cos(xLabelsRotateRadians) * measurementFactors.yLabelsFontSize,
+			);
+			const opposite = Math.abs(Math.sin(xLabelsRotateRadians) * levelWidthMax);
+			const xLabelsHeight = Math.ceil(adjacent + opposite);
+
+			// Create bounding rectangles for the various regions of the chart.
+			const plotRegionMargin = measurementFactors.yLabelsFontSize / 2;
+
+			const chart = new Rectangle({
+				x: 0,
+				y: 0,
+				width,
+				height:
+					skillRatings.length * measurementFactors.yLabelsLineHeight +
+					plotRegionMargin +
+					xLabelsHeight,
+			});
+
+			const plot = new Rectangle({
+				x: chart.x + yLabelsWidth + plotRegionMargin,
+				y: chart.y,
+				width: chart.width - yLabelsWidth - plotRegionMargin,
+				height: skillRatings.length * measurementFactors.yLabelsLineHeight,
+			});
+
+			const yLabels = new Rectangle({
+				x: chart.x,
+				y: chart.y,
+				width: yLabelsWidth,
+				height: skillRatings.length * measurementFactors.yLabelsLineHeight,
+			});
+
+			const xLabels = new Rectangle({
+				x: chart.x,
+				y: chart.bottom - xLabelsHeight,
+				width: chart.width,
+				height: xLabelsHeight,
+			});
+
+			result = {
+				chart,
+				plot,
+				xLabels,
+				yLabels,
+			};
+			if (debug) {
+				console.log({ regions: result });
+			}
+		}
+		return result;
+	}, [allLevels, allSkills, measurementFactors, skillRatings.length, width]);
+
+	interface XAxis {
+		getX(skillRating: SkillRating): number;
+		scale: d3.ScaleLinear<number, number>;
+	}
+	const xAxis = useMemo((): XAxis | undefined => {
+		let result: XAxis | undefined;
+		if (regions) {
+			const scale = d3
+				.scaleLinear()
+				.domain([0, skillRatingMax])
+				.range([regions.plot.x, regions.plot.right]);
+			result = {
+				getX(skillRating: SkillRating): number {
+					return scale(skillRating.rating);
+				},
+				scale,
+			};
+			if (debug) {
+				console.log({ xAxis: result });
+			}
+		}
+		return result;
+	}, [regions]);
+
+	// Draw the x-axis grid.
 	useEffect((): void => {
-		// Ensure that the necessary pieces are defined.
-		if (!ref.current || !regions) {
+		if (!div || !regions || !xAxis) {
 			return;
 		}
 
-		// Initialize a D3 starting point with the component root.
-		const container = d3.select(ref.current);
+		// This function calculates the polyline points of a single grid line, which have "tails"
+		// (a.k.a. axis marks) that extend downward from the plot region into the x-axis labels
+		// region. The tails are the hypotenuse of a right triangle having height `opposite` and
+		// angle `xLabelsRotateRadians` (clockwise radians from 9 o'clock).
+		const xGridPolylinePoints = (skillLevel: SkillRating) => {
+			const opposite = regions.xLabels.height;
+			const adjacent = opposite / Math.tan(Math.abs(xLabelsRotateRadians));
 
-		// Initialize general purpose functions for plotting.
-		const scale = d3
-			.scaleLinear()
-			.domain([0, skillRatingMax])
-			.range([regions.plot.x, regions.plot.right]);
-
-		function range(skillRating: SkillRating): number {
-			return scale(skillRating.rating);
-		}
-
-		function rating(skillRating: SkillRating): number {
-			return skillRating.rating;
-		}
-
-		function skill(skillRating: SkillRating): string {
-			return skillRating.skill;
-		}
-
-		// Draw the grid and x-axis labels.
-
-		// The grid lines have "tails" (a.k.a. axis marks) that extend downward from the plot
-		// region into the x-axis labels region. The tails are the hypotenuse of a right triangle
-		// having height `opposite` and angle `theta` (counter-clockwise radians from 9 o'clock).
-		// This function calculates the polyline points of a single grid line.
-		function xGridPoints(skillLevel: SkillRating): string {
-			const opposite = xLabelsHeight;
-			const theta = (xLabelsRotationDegrees * Math.PI) / 180;
-			const adjacent = opposite / Math.tan(theta);
-
-			const x0 = range(skillLevel);
-			const y0 = regions!.plot.y;
+			const x0 = xAxis.getX(skillLevel);
+			const y0 = regions.plot.y;
 			const x1 = x0;
-			const y1 = regions!.xLabels.y;
+			const y1 = regions.xLabels.y;
 			const x2 = x0 - adjacent;
-			const y2 = regions!.xLabels.bottom;
+			const y2 = regions.xLabels.bottom;
 
 			return `${x0},${y0} ${x1},${y1} ${x2},${y2}`;
-		}
+		};
 
-		container
+		d3.select(div)
 			.select('g.x-grid')
 			.selectAll('polyline')
 			.data(skillLevels)
 			.join('polyline')
-			.attr('data-level', skill)
-			.attr('data-rating', rating)
+			.attr('data-level', getSkill)
+			.attr('data-rating', getRating)
 			.attr('fill', 'none')
-			.attr('points', xGridPoints);
+			.attr('points', xGridPolylinePoints);
+		if (debug) {
+			console.log('rendered x-grid');
+		}
+	}, [div, regions, skillLevels, xAxis]);
 
-		function xLabelTransform(skillLevel: SkillRating): string {
-			return `rotate(-${xLabelsRotationDegrees},${range(skillLevel)},${regions!.xLabels.y})`;
+	// Draw the x-axis labels.
+	useEffect((): void => {
+		if (!div || !measurementFactors || !regions || !xAxis) {
+			return;
 		}
 
-		const xLabelY = regions.xLabels.y + fontSize;
+		const xLabelTransform = (skillLevel: SkillRating) =>
+			`rotate(${xLabelsRotateDegrees},${xAxis.getX(skillLevel)},${regions.xLabels.y})`;
 
-		container
+		const xLabelY = regions.xLabels.y + measurementFactors.xLabelsFontSize;
+
+		d3.select(div)
 			.select('g.x-labels')
 			.selectAll('text')
 			.data(skillLevels)
 			.join('text')
-			.attr('data-level', skill)
-			.attr('data-rating', rating)
+			.attr('data-level', getSkill)
+			.attr('data-rating', getRating)
 			.attr('text-anchor', 'end')
 			.attr('transform', xLabelTransform)
-			.attr('x', range)
+			.attr('x', xAxis.getX)
 			.attr('y', xLabelY)
-			.text(skill);
+			.text(getSkill);
+		if (debug) {
+			console.log('rendered x-labels');
+		}
+	}, [div, measurementFactors, skillLevels, regions, xAxis]);
 
-		// Draw the y-axis labels and bars.
-		const sortedSkillRatings = skillRatings.slice().sort(sortComparer);
-
-		const durationShortMilliseconds = 500;
-		const durationLongMilliseconds = 2000;
-
-		const yLabelX = regions.yLabels.right;
-
-		function yLabelY(_skillRating: SkillRating, skillIndex: number): number {
-			return skillIndex * lineHeight + fontSize;
+	// Draw the y-axis labels.
+	useEffect((): void => {
+		if (!div || !measurementFactors || !regions) {
+			return;
 		}
 
-		container
+		const yLabelX = regions.yLabels.right;
+		const yLabelY = (_skillRating: SkillRating, skillIndex: number) =>
+			skillIndex * measurementFactors.yLabelsLineHeight + measurementFactors.yLabelsFontSize;
+
+		d3.select(div)
 			.select('g.y-labels')
 			.selectAll<SVGTextElement, SkillRating>('text')
-			.data(sortedSkillRatings, skill)
+			.data(sortedSkillRatings, getSkill)
 			.join(
 				(enter) =>
 					enter
 						.append('text')
-						.attr('data-skill', skill)
-						.attr('data-rating', rating)
+						.attr('data-skill', getSkill)
+						.attr('data-rating', getRating)
 						.attr('text-anchor', 'end')
 						.attr('x', yLabelX)
 						.attr('y', yLabelY)
-						.text(skill),
+						.text(getSkill),
 				(update) =>
 					update.call((update) =>
 						update.transition().duration(durationShortMilliseconds).attr('y', yLabelY),
 					),
 			);
+		if (debug) {
+			console.log('rendered y-labels');
+		}
+	}, [div, measurementFactors, sortedSkillRatings, regions]);
 
-		const barHeight = fontSize * 0.75;
-
-		function barY(_skillRating: SkillRating, skillIndex: number): number {
-			return skillIndex * lineHeight + fontSize * 0.3;
+	// Draw the bars.
+	useEffect((): void => {
+		if (!div || !measurementFactors || !xAxis) {
+			return;
 		}
 
-		function barWidth(skillRating: SkillRating): number {
-			return range(skillRating) - scale(0);
-		}
+		const barHeight = measurementFactors.xLabelsFontSize * 0.75;
 
-		container
+		const barX: number = xAxis.scale(0);
+
+		const barY = (_skillRating: SkillRating, skillIndex: number): number =>
+			skillIndex * measurementFactors.yLabelsLineHeight +
+			measurementFactors.yLabelsFontSize * 0.3;
+
+		const barWidth = (skillRating: SkillRating): number => xAxis.getX(skillRating) - barX;
+
+		d3.select(div)
 			.select('g.bars')
 			.selectAll<SVGRectElement, SkillRating>('rect')
-			.data(sortedSkillRatings, skill)
+			.data(sortedSkillRatings, getSkill)
 			.join(
 				(enter) =>
 					enter
 						.append('rect')
-						.attr('data-skill', skill)
-						.attr('data-rating', rating)
+						.attr('data-skill', getSkill)
+						.attr('data-rating', getRating)
 						.attr('height', barHeight)
 						.attr('width', 0)
-						.attr('x', scale(0))
+						.attr('x', barX)
 						.attr('y', barY)
 						.call((enter) =>
 							enter
@@ -251,55 +365,74 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 							.attr('y', barY),
 					),
 			);
-	}, [
-		fontSize,
-		lineHeight,
-		ref,
-		regions,
-		skillLevels,
-		skillRatings,
-		sortComparer,
-		xLabelsHeight,
-	]);
+		if (debug) {
+			console.log('rendered bars');
+		}
+	}, [div, measurementFactors, sortedSkillRatings, xAxis]);
 
 	// Create some unique IDs for SVG fragment IDs.
-	const [linearGradientId] = useState(uniqueId('linear-gradient-'));
-	const [maskId] = useState(uniqueId('mask-'));
+	const [xGridLinearGradientId] = useState(uniqueId('x-grid-linear-gradient-'));
+	const [xGridMaskId] = useState(uniqueId('x-grid-mask-'));
+
+	const [barsLinearGradientId] = useState(uniqueId('bars-linear-gradient-'));
+	const [barsMaskId] = useState(uniqueId('bars-mask-'));
 
 	return (
-		<div className="skill-ratings-chart-component" ref={ref}>
-			{regions && (
-				<svg height={regions.chart.height} width="100%">
-					<defs>
-						<linearGradient id={linearGradientId}>
-							<stop offset="0" stopColor="white" stopOpacity={1 / 3} />
-							<stop offset="1" stopColor="white" stopOpacity="1" />
-						</linearGradient>
-						<mask id={maskId}>
-							<rect fill={`url(#${linearGradientId})`} {...regions.plot} />
-						</mask>
-					</defs>
-					<g className="x-grid" />
-					<g className="x-labels" />
-					<g
-						className="y-labels"
-						onClick={(): void => {
-							setSortDesc(sortBy === 'skill' ? !sortDesc : false);
-							setSortBy('skill');
-						}}
-						style={{ cursor: 'pointer' }}
-					/>
-					<g
-						className="bars"
-						mask={`url(#${maskId})`}
-						onClick={(): void => {
-							setSortDesc(sortBy === 'rating' ? !sortDesc : true);
-							setSortBy('rating');
-						}}
-						style={{ cursor: 'pointer' }}
-					/>
-				</svg>
-			)}
+		<div className="skill-ratings-chart-component" ref={divRef}>
+			<svg height={regions?.chart.height} width="100%">
+				<defs>
+					{/* Fade out the x-grid tails from top to bottom with a transparency mask. */}
+					<linearGradient id={xGridLinearGradientId} x1="0%" x2="0%" y1="0%" y2="100%">
+						<stop
+							offset={regions && 1 - regions.xLabels.height / regions.chart.height}
+							stopColor="white"
+							stopOpacity="1"
+						/>
+						<stop offset="1" stopColor="white" stopOpacity="0" />
+					</linearGradient>
+					<mask id={xGridMaskId}>
+						<rect fill={`url(#${xGridLinearGradientId})`} {...regions?.chart} />
+					</mask>
+
+					{/* Fade in the bars from left to right with a transparency mask. */}
+					<linearGradient id={barsLinearGradientId}>
+						<stop offset="0" stopColor="white" stopOpacity="0.25" />
+						<stop offset="1" stopColor="white" stopOpacity="1" />
+					</linearGradient>
+					<mask id={barsMaskId}>
+						<rect fill={`url(#${barsLinearGradientId})`} {...regions?.plot} />
+					</mask>
+				</defs>
+
+				{debug && (
+					<g className="regions">
+						{regions &&
+							Object.entries(regions).map(([key, region]: [string, Rectangle]) => (
+								<rect key={key} fill="none" stroke="red" {...region} />
+							))}
+					</g>
+				)}
+				<g className="x-grid" mask={`url(#${xGridMaskId})`} />
+				<g className="x-labels" ref={xLabelsGroupRef} />
+				<g
+					className="y-labels"
+					onClick={(): void => {
+						setSortDesc(sortBy === 'skill' ? !sortDesc : false);
+						setSortBy('skill');
+					}}
+					ref={yLabelsGroupRef}
+					style={{ cursor: 'pointer' }}
+				/>
+				<g
+					className="bars"
+					mask={`url(#${barsMaskId})`}
+					onClick={(): void => {
+						setSortDesc(sortBy === 'rating' ? !sortDesc : true);
+						setSortBy('rating');
+					}}
+					style={{ cursor: 'pointer' }}
+				/>
+			</svg>
 		</div>
 	);
 };
