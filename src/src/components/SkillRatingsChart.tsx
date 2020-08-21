@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import { uniqueId } from 'lodash';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import useResizeObserver from 'use-resize-observer';
 import {
 	getRating,
@@ -320,9 +321,10 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 		}
 	}, [div, measurementFactors, sortedSkillRatings, regions]);
 
-	// Draw the bars.
+	// Draw the bars, but only if the chart is at least partially visible.
+	const [svgRef, inView] = useInView({ threshold: 0.25, triggerOnce: true });
 	useEffect((): void => {
-		if (!div || !measurementFactors || !xAxis) {
+		if (!div || !inView || !measurementFactors || !xAxis) {
 			return;
 		}
 
@@ -368,7 +370,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 		if (debug) {
 			console.log('rendered bars');
 		}
-	}, [div, measurementFactors, sortedSkillRatings, xAxis]);
+	}, [div, inView, measurementFactors, sortedSkillRatings, xAxis]);
 
 	// Create some unique IDs for SVG fragment IDs.
 	const [xGridLinearGradientId] = useState(uniqueId('x-grid-linear-gradient-'));
@@ -379,7 +381,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 
 	return (
 		<div className="skill-ratings-chart-component" ref={divRef}>
-			<svg height={regions?.chart.height} width="100%">
+			<svg height={regions?.chart.height} ref={svgRef} width="100%">
 				<defs>
 					{/* Fade out the x-grid tails from top to bottom with a transparency mask. */}
 					<linearGradient id={xGridLinearGradientId} x1="0%" x2="0%" y1="0%" y2="100%">
