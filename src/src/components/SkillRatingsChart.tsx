@@ -15,8 +15,17 @@ import { Rectangle } from './rectangle';
 
 const debug = false;
 
-const durationShortMilliseconds = 500;
-const durationLongMilliseconds = 2000;
+const durations = {
+	get short(): number {
+		return 100;
+	},
+	get medium(): number {
+		return this.short * 5;
+	},
+	get long(): number {
+		return this.short * 20;
+	},
+};
 
 const xLabelsRotateDegrees = -30;
 const xLabelsRotateRadians = (xLabelsRotateDegrees * Math.PI) / 180;
@@ -72,6 +81,9 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 		[skillRatings, sortComparer],
 	);
 
+	// Declare some variables that determine whether to start animations.
+	const [svgRef, inView] = useInView({ threshold: 0.25, triggerOnce: true });
+
 	// Declare some variables for dynamic (re)sizing.
 	const { ref: divRef, width } = useResizeObserver<HTMLDivElement>();
 	const div: HTMLDivElement | null = divRef.current;
@@ -107,6 +119,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 					yLabelsFontSize: Number.parseFloat(yLabelsStyle.fontSize),
 					yLabelsLineHeight: Number.parseFloat(yLabelsStyle.lineHeight),
 				};
+
 				if (debug) {
 					console.log({ measurementFactors: result });
 				}
@@ -190,6 +203,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 				xLabels,
 				yLabels,
 			};
+
 			if (debug) {
 				console.log({ regions: result });
 			}
@@ -214,6 +228,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 				},
 				scale,
 			};
+
 			if (debug) {
 				console.log({ xAxis: result });
 			}
@@ -221,28 +236,31 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 		return result;
 	}, [regions]);
 
-	// Draw the x-axis grid.
+	// Draw the x-axis grid polylines.
 	useEffect((): void => {
 		if (!div || !regions || !xAxis) {
 			return;
 		}
 
-		// This function calculates the polyline points of a single grid line, which have "tails"
-		// (a.k.a. axis marks) that extend downward from the plot region into the x-axis labels
-		// region. The tails are the hypotenuse of a right triangle having height `opposite` and
-		// angle `xLabelsRotateRadians` (clockwise radians from 9 o'clock).
-		const xGridPolylinePoints = (skillLevel: SkillRating) => {
-			const opposite = regions.xLabels.height;
-			const adjacent = opposite / Math.tan(Math.abs(xLabelsRotateRadians));
+		const xGridPolyline = {
+			fill: 'none',
+			// This function calculates the polyline points of a single grid line, which have "tails"
+			// (a.k.a. axis marks) that extend downward from the plot region into the x-axis labels
+			// region. The tails are the hypotenuse of a right triangle having height `opposite` and
+			// angle `xLabelsRotateRadians` (clockwise radians from 9 o'clock).
+			points: (skillLevel: SkillRating): string => {
+				const opposite = regions.xLabels.height;
+				const adjacent = opposite / Math.tan(Math.abs(xLabelsRotateRadians));
 
-			const x0 = xAxis.getX(skillLevel);
-			const y0 = regions.plot.y;
-			const x1 = x0;
-			const y1 = regions.xLabels.y;
-			const x2 = x0 - adjacent;
-			const y2 = regions.xLabels.bottom;
+				const x0 = xAxis.getX(skillLevel);
+				const y0 = regions.plot.y;
+				const x1 = x0;
+				const y1 = regions.xLabels.y;
+				const x2 = x0 - adjacent;
+				const y2 = regions.xLabels.bottom;
 
-			return `${x0},${y0} ${x1},${y1} ${x2},${y2}`;
+				return `${x0},${y0} ${x1},${y1} ${x2},${y2}`;
+			},
 		};
 
 		d3.select(div)
@@ -252,8 +270,9 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			.join('polyline')
 			.attr('data-level', getSkill)
 			.attr('data-rating', getRating)
-			.attr('fill', 'none')
-			.attr('points', xGridPolylinePoints);
+			.attr('fill', xGridPolyline.fill)
+			.attr('points', xGridPolyline.points);
+
 		if (debug) {
 			console.log('rendered x-grid');
 		}
@@ -265,10 +284,13 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			return;
 		}
 
-		const xLabelTransform = (skillLevel: SkillRating) =>
-			`rotate(${xLabelsRotateDegrees},${xAxis.getX(skillLevel)},${regions.xLabels.y})`;
-
-		const xLabelY = regions.xLabels.y + measurementFactors.xLabelsFontSize;
+		const xLabel = {
+			textAnchor: 'end',
+			transform: (skillLevel: SkillRating): string =>
+				`rotate(${xLabelsRotateDegrees},${xAxis.getX(skillLevel)},${regions.xLabels.y})`,
+			x: xAxis.getX,
+			y: regions.xLabels.y + measurementFactors.xLabelsFontSize,
+		};
 
 		d3.select(div)
 			.select('g.x-labels')
@@ -277,11 +299,12 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			.join('text')
 			.attr('data-level', getSkill)
 			.attr('data-rating', getRating)
-			.attr('text-anchor', 'end')
-			.attr('transform', xLabelTransform)
-			.attr('x', xAxis.getX)
-			.attr('y', xLabelY)
+			.attr('text-anchor', xLabel.textAnchor)
+			.attr('transform', xLabel.transform)
+			.attr('x', xLabel.x)
+			.attr('y', xLabel.y)
 			.text(getSkill);
+
 		if (debug) {
 			console.log('rendered x-labels');
 		}
@@ -289,13 +312,25 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 
 	// Draw the y-axis labels.
 	useEffect((): void => {
-		if (!div || !measurementFactors || !regions) {
+		if (!div || !inView || !measurementFactors || !regions) {
 			return;
 		}
 
-		const yLabelX = regions.yLabels.right;
-		const yLabelY = (_skillRating: SkillRating, skillIndex: number) =>
-			skillIndex * measurementFactors.yLabelsLineHeight + measurementFactors.yLabelsFontSize;
+		const yLabel = {
+			fadeInDelay: (_skillRating: SkillRating, skillIndex: number): number =>
+				skillIndex * durations.short,
+			fadeInDuration: durations.medium,
+			fadeInOpacityFrom: 0,
+			fadeInOpacityTo: 1,
+			fadeInTransition: 'fade-in',
+			sortDuration: durations.medium,
+			sortTransition: 'sort',
+			textAnchor: 'end',
+			x: regions.yLabels.right,
+			y: (_skillRating: SkillRating, skillIndex: number): number =>
+				skillIndex * measurementFactors.yLabelsLineHeight +
+				measurementFactors.yLabelsFontSize,
+		};
 
 		d3.select(div)
 			.select('g.y-labels')
@@ -307,36 +342,53 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 						.append('text')
 						.attr('data-skill', getSkill)
 						.attr('data-rating', getRating)
-						.attr('text-anchor', 'end')
-						.attr('x', yLabelX)
-						.attr('y', yLabelY)
-						.text(getSkill),
+						.attr('text-anchor', yLabel.textAnchor)
+						.attr('opacity', yLabel.fadeInOpacityFrom)
+						.attr('x', yLabel.x)
+						.attr('y', yLabel.y)
+						.text(getSkill)
+						.call((enter) =>
+							enter
+								.transition(yLabel.fadeInTransition)
+								.delay(yLabel.fadeInDelay)
+								.duration(yLabel.fadeInDuration)
+								.attr('opacity', yLabel.fadeInOpacityTo),
+						),
 				(update) =>
 					update.call((update) =>
-						update.transition().duration(durationShortMilliseconds).attr('y', yLabelY),
+						update
+							.transition(yLabel.sortTransition)
+							.duration(yLabel.sortDuration)
+							.attr('y', yLabel.y),
 					),
 			);
+
 		if (debug) {
 			console.log('rendered y-labels');
 		}
-	}, [div, measurementFactors, sortedSkillRatings, regions]);
+	}, [div, inView, measurementFactors, sortedSkillRatings, regions]);
 
-	// Draw the bars, but only if the chart is at least partially visible.
-	const [svgRef, inView] = useInView({ threshold: 0.25, triggerOnce: true });
+	// Draw the bars.
 	useEffect((): void => {
 		if (!div || !inView || !measurementFactors || !xAxis) {
 			return;
 		}
 
-		const barHeight = measurementFactors.xLabelsFontSize * 0.75;
-
-		const barX: number = xAxis.scale(0);
-
-		const barY = (_skillRating: SkillRating, skillIndex: number): number =>
-			skillIndex * measurementFactors.yLabelsLineHeight +
-			measurementFactors.yLabelsFontSize * 0.3;
-
-		const barWidth = (skillRating: SkillRating): number => xAxis.getX(skillRating) - barX;
+		const bar = {
+			growInDelay: (_skillRating: SkillRating, skillIndex: number): number =>
+				skillIndex * durations.short,
+			growInDuration: durations.long,
+			growInFrom: 0,
+			growInTo: (skillRating: SkillRating): number => xAxis.getX(skillRating) - bar.x,
+			growInTransition: 'grow-in',
+			height: measurementFactors.xLabelsFontSize * 0.75,
+			x: xAxis.scale(0),
+			y: (_skillRating: SkillRating, skillIndex: number): number =>
+				skillIndex * measurementFactors.yLabelsLineHeight +
+				measurementFactors.yLabelsFontSize * 0.3,
+			sortDuration: durations.medium,
+			sortTransition: 'sort',
+		};
 
 		d3.select(div)
 			.select('g.bars')
@@ -348,25 +400,26 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 						.append('rect')
 						.attr('data-skill', getSkill)
 						.attr('data-rating', getRating)
-						.attr('height', barHeight)
-						.attr('width', 0)
-						.attr('x', barX)
-						.attr('y', barY)
+						.attr('height', bar.height)
+						.attr('width', bar.growInFrom)
+						.attr('x', bar.x)
+						.attr('y', bar.y)
 						.call((enter) =>
 							enter
-								.transition()
-								.duration(durationLongMilliseconds)
-								.attr('width', barWidth),
+								.transition(bar.growInTransition)
+								.delay(bar.growInDelay)
+								.duration(bar.growInDuration)
+								.attr('width', bar.growInTo),
 						),
 				(update) =>
 					update.call((update) =>
 						update
-							.attr('width', barWidth)
-							.transition()
-							.duration(durationShortMilliseconds)
-							.attr('y', barY),
+							.transition(bar.sortTransition)
+							.duration(bar.sortDuration)
+							.attr('y', bar.y),
 					),
 			);
+
 		if (debug) {
 			console.log('rendered bars');
 		}
