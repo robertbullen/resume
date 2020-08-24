@@ -3,6 +3,8 @@ import { uniqueId } from 'lodash';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import useResizeObserver from 'use-resize-observer';
+import { Point } from '../geometry/point';
+import { Rectangle } from '../geometry/rectangle';
 import {
 	getRating,
 	getSkill,
@@ -11,7 +13,6 @@ import {
 	skillRatingLevels,
 	skillRatingMax,
 } from '../resume';
-import { Rectangle } from './rectangle';
 
 const debug = false;
 
@@ -247,19 +248,17 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			// This function calculates the polyline points of a single grid line, which have "tails"
 			// (a.k.a. axis marks) that extend downward from the plot region into the x-axis labels
 			// region. The tails are the hypotenuse of a right triangle having height `opposite` and
-			// angle `xLabelsRotateRadians` (clockwise radians from 9 o'clock).
+			// angle `xLabelsRotateRadians` (clockwise radians as is SVG's convention).
 			points: (skillLevel: SkillRating): string => {
 				const opposite = regions.xLabels.height;
 				const adjacent = opposite / Math.tan(Math.abs(xLabelsRotateRadians));
 
-				const x0 = xAxis.getX(skillLevel);
-				const y0 = regions.plot.y;
-				const x1 = x0;
-				const y1 = regions.xLabels.y;
-				const x2 = x0 - adjacent;
-				const y2 = regions.xLabels.bottom;
-
-				return `${x0},${y0} ${x1},${y1} ${x2},${y2}`;
+				const x0: number = xAxis.getX(skillLevel);
+				return [
+					new Point({ x: x0, y: regions.plot.y }),
+					new Point({ x: x0, y: regions.xLabels.y }),
+					new Point({ x: x0 - adjacent, y: regions.xLabels.bottom }),
+				].join(' ');
 			},
 		};
 
@@ -446,7 +445,10 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 						<stop offset="1" stopColor="white" stopOpacity="0" />
 					</linearGradient>
 					<mask id={xGridMaskId}>
-						<rect fill={`url(#${xGridLinearGradientId})`} {...regions?.chart} />
+						<rect
+							fill={`url(#${xGridLinearGradientId})`}
+							{...regions?.chart.toJSON()}
+						/>
 					</mask>
 
 					{/* Fade in the bars from left to right with a transparency mask. */}
@@ -455,7 +457,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 						<stop offset="1" stopColor="white" stopOpacity="1" />
 					</linearGradient>
 					<mask id={barsMaskId}>
-						<rect fill={`url(#${barsLinearGradientId})`} {...regions?.plot} />
+						<rect fill={`url(#${barsLinearGradientId})`} {...regions?.plot.toJSON()} />
 					</mask>
 				</defs>
 
@@ -463,7 +465,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 					<g className="regions">
 						{regions &&
 							Object.entries(regions).map(([key, region]: [string, Rectangle]) => (
-								<rect key={key} fill="none" stroke="red" {...region} />
+								<rect key={key} fill="none" stroke="red" {...region?.toJSON()} />
 							))}
 					</g>
 				)}

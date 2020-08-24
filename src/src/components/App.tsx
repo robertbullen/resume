@@ -5,6 +5,7 @@ import { Resume } from '../resume';
 import './App.css';
 import { Candidate } from './Candidate';
 import { ExperienceTimeline } from './ExperienceTimeline';
+import { InterestsHoneycomb } from './InterestsHoneycomb';
 import { Mission } from './Mission';
 import { generateSectionId, Section } from './Section';
 import { SkillRatingsChart } from './SkillRatingsChart';
@@ -40,7 +41,7 @@ const App: FC = () => {
 							<Row>
 								<Col>
 									<Section heading="Pursuits & Interests" id="pursuits-interests">
-										hello
+										<InterestsHoneycomb resume={resume} />
 									</Section>
 								</Col>
 							</Row>

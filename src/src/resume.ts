@@ -10,6 +10,14 @@ export interface Candidate {
 	name: string;
 }
 
+export interface Interest {
+	column: number;
+	row: number;
+	name: string;
+}
+
+export type InterestsRecord = Record<string, Interest[]>;
+
 export interface SkillRating {
 	rating: number;
 	skill: string;
@@ -52,6 +60,7 @@ export interface Experience {
 export interface Resume {
 	candidate: Candidate;
 	experiences: Experience[];
+	interests: InterestsRecord;
 	mission: string;
 	skills: SkillCategoriesRecord;
 }
@@ -117,6 +126,42 @@ export const robert: Resume = {
 			startDate: new Date('2018-02-26'),
 		},
 	],
+	interests: {
+		'Analytical Pursuits': [
+			{
+				column: 0,
+				row: 2,
+				name: 'Automation',
+			},
+		],
+		'Creative Interests': [
+			{
+				column: 3,
+				row: 0,
+				name: 'Typography',
+			},
+			{
+				column: 5,
+				row: 0,
+				name: 'illustration',
+			},
+			{
+				column: 4,
+				row: 1,
+				name: 'Graphic Design',
+			},
+			{
+				column: 6,
+				row: 1,
+				name: 'Video Creation',
+			},
+			{
+				column: 3,
+				row: 2,
+				name: 'User Experience',
+			},
+		],
+	},
 	mission:
 		'Robert leverages his analytical and creative talents to the fullest when designing and writing modern full stack applications. He is enthusiastic and experienced when it comes to discovering promising software development technologies and adopting best practices.',
 	skills: {
