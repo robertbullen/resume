@@ -1,9 +1,12 @@
+import classNames from 'classnames';
 import * as d3 from 'd3-hexbin';
 import React, { FC, useMemo } from 'react';
 import useResizeObserver from 'use-resize-observer';
 import { calcCenter, calcHeightToFitRows, calcRadiusToFitColumns } from '../geometry/hexagon';
 import { Point } from '../geometry/point';
 import { Interest, ResumeProps } from '../resume';
+
+const debug = false;
 
 export const InterestsHoneycomb: FC<ResumeProps> = (props: ResumeProps) => {
 	const { ref: divRef, width } = useResizeObserver<HTMLDivElement>();
@@ -48,54 +51,77 @@ export const InterestsHoneycomb: FC<ResumeProps> = (props: ResumeProps) => {
 
 	return (
 		<div className="interests-honeycomb-component" ref={divRef}>
-			<svg style={{ height: derivedDimensions?.height, width: '100%' }}>
-				<g>
-					{/* <path d={hexbin.mesh()} fill="none" stroke="black" /> */}
+			<svg
+				style={{ height: derivedDimensions?.height, width: '100%' }}
+				transform="rotate(15)"
+			>
+				{debug && (
+					<g>
+						<path
+							d={hexbin.mesh()}
+							fill="none"
+							stroke="red"
+							transform={`translate(0, -${(derivedDimensions?.radius ?? 0) / 2})`}
+						/>
+					</g>
+				)}
 
-					{Object.values(props.resume.interests)
-						.flat()
-						.map((interest: Interest) => {
-							const center: Point = calcCenter(
-								derivedDimensions?.radius ?? 0,
-								interest.column,
-								interest.row,
-							);
-							return (
-								<path
-									d={`M${center.x},${center.y}${hexbin
-										.hexagon
-										// (derivedDimensions?.radius ?? 0) - 1,
-										()}`}
-									key={interest.name}
-									fill="orange"
-									stroke="white"
-									strokeWidth="2"
-									strokeLinejoin="round"
-								/>
-							);
-						})}
-				</g>
-				<g>
-					{Object.values(props.resume.interests)
-						.flat()
-						.map((interest: Interest) => {
-							const center: Point = calcCenter(
-								derivedDimensions?.radius ?? 0,
-								interest.column,
-								interest.row,
-							);
-							return (
-								<text
-									x={center.x}
-									y={center.y + 8}
-									fill="white"
-									textAnchor="middle"
-								>
-									{interest.name}
-								</text>
-							);
-						})}
-				</g>
+				{Object.entries(props.resume.interests).map(
+					([cluster, interests]: [string, Interest[]]) => (
+						<g className="hexagons" data-cluster={cluster} key={cluster}>
+							{interests.map((interest: Interest) => {
+								const center: Point = calcCenter(
+									derivedDimensions?.radius ?? 0,
+									interest.column,
+									interest.row,
+								);
+								return (
+									<path
+										className={classNames({
+											cluster: interest.name === cluster,
+										})}
+										d={`M ${center.x},${center.y} ${hexbin.hexagon(
+											(derivedDimensions?.radius ?? 0) - 1.5,
+										)}`}
+										key={interest.name}
+									/>
+								);
+							})}
+						</g>
+					),
+				)}
+
+				{Object.entries(props.resume.interests).map(
+					([cluster, interests]: [string, Interest[]]) => (
+						<g className="labels" data-cluster={cluster} key={cluster}>
+							{interests.map((interest: Interest) => {
+								const center: Point = calcCenter(
+									derivedDimensions?.radius ?? 0,
+									interest.column,
+									interest.row,
+								);
+								return (
+									<>
+										{debug && (
+											<circle cx={center.x} cy={center.y} fill="red" r="2" />
+										)}
+										<text
+											className={classNames({
+												cluster: interest.name === cluster,
+											})}
+											textAnchor="middle"
+											transform={`rotate(-15, ${center.x}, ${center.y + 7})`}
+											x={center.x}
+											y={center.y + 7}
+										>
+											{interest.name}
+										</text>
+									</>
+								);
+							})}
+						</g>
+					),
+				)}
 			</svg>
 		</div>
 	);

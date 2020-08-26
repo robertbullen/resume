@@ -13,18 +13,21 @@
 
 	--content-margin: 2rem;
 	--font-size-smaller: 87.5%;
+	--font-weight-light: 200;
+	--font-weight-normal: 300;
+	--font-weight-bold: 400;
 }
 
 body {
 	background-color: var(--color-background);
 	color: var(--color-high-contrast);
 	font-family: 'Source Sans Pro', sans-serif;
-	font-weight: 300;
+	font-weight: var(--font-weight-normal);
 }
 
 h1 {
 	color: var(--color-accent);
-	font-weight: 200;
+	font-weight: var(--font-weight-light);
 	letter-spacing: -0.045em;
 	line-height: 100%;
 	margin: -0.09em 0 0 -0.09em;
@@ -34,9 +37,8 @@ h1 {
 }
 
 h2 {
-	color: var(--color-low-contrast);
 	font-size: 133%;
-	font-weight: 300;
+	font-weight: var(--font-weight-light);
 	text-transform: uppercase;
 	white-space: nowrap;
 }
@@ -78,6 +80,55 @@ section {
 
 .mission-component p {
 	text-align: justify;
+}
+
+.interests-honeycomb-component g[data-cluster='Analytical Pursuits'] {
+	transform: translate(-0.5rem, 0);
+}
+
+.interests-honeycomb-component g[data-cluster='Creative Interests'] {
+	transform: translate(0.5rem, 0);
+}
+
+.interests-honeycomb-component g.hexagons {
+	opacity: 0.75;
+	/* stroke: var(--color-background);
+	stroke-width: 0.125rem; */
+}
+
+.interests-honeycomb-component g.hexagons[data-cluster='Analytical Pursuits'] {
+	fill: var(--color-accent);
+}
+
+.interests-honeycomb-component g.hexagons[data-cluster='Analytical Pursuits'] .cluster {
+	fill: none;
+	stroke: var(--color-accent);
+	stroke-width: 0.25rem;
+}
+
+.interests-honeycomb-component g.labels[data-cluster='Analytical Pursuits'] .cluster {
+	fill: var(--color-accent);
+	text-transform: uppercase;
+}
+
+.interests-honeycomb-component g.hexagons[data-cluster='Creative Interests'] {
+	fill: var(--color-low-contrast);
+}
+
+.interests-honeycomb-component g.hexagons[data-cluster='Creative Interests'] .cluster {
+	fill: none;
+	stroke: var(--color-low-contrast);
+	stroke-width: 0.25rem;
+}
+
+.interests-honeycomb-component g.labels[data-cluster='Creative Interests'] .cluster {
+	text-transform: uppercase;
+	fill: var(--color-low-contrast);
+}
+
+.interests-honeycomb-component g.labels {
+	fill: var(--color-background);
+	text-transform: lowercase;
 }
 
 .skill-ratings-chart-component {

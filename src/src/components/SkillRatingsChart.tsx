@@ -377,8 +377,6 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 			growInDelay: (_skillRating: SkillRating, skillIndex: number): number =>
 				skillIndex * durations.short,
 			growInDuration: durations.long,
-			growInFrom: 0,
-			growInTo: (skillRating: SkillRating): number => xAxis.getX(skillRating) - bar.x,
 			growInTransition: 'grow-in',
 			height: measurementFactors.xLabelsFontSize * 0.75,
 			x: xAxis.scale(0),
@@ -387,6 +385,8 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 				measurementFactors.yLabelsFontSize * 0.3,
 			sortDuration: durations.medium,
 			sortTransition: 'sort',
+			widthFrom: 0,
+			width: (skillRating: SkillRating): number => xAxis.getX(skillRating) - bar.x,
 		};
 
 		d3.select(div)
@@ -400,7 +400,7 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 						.attr('data-skill', getSkill)
 						.attr('data-rating', getRating)
 						.attr('height', bar.height)
-						.attr('width', bar.growInFrom)
+						.attr('width', bar.widthFrom)
 						.attr('x', bar.x)
 						.attr('y', bar.y)
 						.call((enter) =>
@@ -408,11 +408,12 @@ export const SkillRatingsChart: FC<Props> = (props: Props) => {
 								.transition(bar.growInTransition)
 								.delay(bar.growInDelay)
 								.duration(bar.growInDuration)
-								.attr('width', bar.growInTo),
+								.attr('width', bar.width),
 						),
 				(update) =>
 					update.call((update) =>
 						update
+							.attr('width', bar.width)
 							.transition(bar.sortTransition)
 							.duration(bar.sortDuration)
 							.attr('y', bar.y),
