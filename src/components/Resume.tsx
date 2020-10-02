@@ -1,21 +1,15 @@
-import React, { FC } from 'react';
+import React from 'react';
 import { Col, Container, Row } from 'reactstrap';
-import { useResume } from '../hooks/use-resume';
-import { Resume } from '../resume';
-import './App.css';
+import { ResumeProps } from '../resume/resume-model';
 import { Candidate } from './Candidate';
 import { ExperienceTimeline } from './ExperienceTimeline';
-import { InterestsHoneycomb } from './InterestsHoneycomb';
+import { InterestsHoneycomb } from './InterestsHexGrid';
 import { Mission } from './Mission';
+import './Resume.css';
 import { generateSectionId, Section } from './Section';
 import { SkillRatingsChart } from './SkillRatingsChart';
 
-const App: FC = () => {
-	const resume: Resume | undefined = useResume();
-	if (!resume) {
-		return null;
-	}
-
+export function Resume(props: ResumeProps) {
 	return (
 		<>
 			<header>
@@ -23,12 +17,12 @@ const App: FC = () => {
 					<Row>
 						<Col xl={6} xs={12}>
 							<Section id="candidate">
-								<Candidate resume={resume} />
+								<Candidate {...props} />
 							</Section>
 						</Col>
 						<Col xl={6} xs={12}>
 							<Section id="mission">
-								<Mission resume={resume} />
+								<Mission {...props} />
 							</Section>
 						</Col>
 					</Row>
@@ -41,19 +35,19 @@ const App: FC = () => {
 							<Row>
 								<Col>
 									<Section heading="Pursuits & Interests" id="pursuits-interests">
-										<InterestsHoneycomb resume={resume} />
+										<InterestsHoneycomb {...props} />
 									</Section>
 								</Col>
 							</Row>
 							<Row>
-								{Object.keys(resume.skills).map((skillCategory: string) => (
+								{Object.keys(props.resume.skills).map((skillCategory: string) => (
 									<Col key={skillCategory} md={6} xs={12}>
 										<Section
 											heading={skillCategory}
 											id={generateSectionId(skillCategory)}
 										>
 											<SkillRatingsChart
-												resume={resume}
+												{...props}
 												skillCategory={skillCategory}
 											/>
 										</Section>
@@ -63,7 +57,7 @@ const App: FC = () => {
 						</Col>
 						<Col xl={6} xs={12}>
 							<Section heading="Experience" id="experience">
-								<ExperienceTimeline resume={resume} />
+								<ExperienceTimeline {...props} />
 							</Section>
 						</Col>
 					</Row>
@@ -72,6 +66,4 @@ const App: FC = () => {
 			<footer></footer>
 		</>
 	);
-};
-
-export default App;
+}

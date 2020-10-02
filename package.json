@@ -48,7 +48,9 @@
     "@types/classnames": "^2.2.10",
     "@types/d3": "^5.7.2",
     "@types/d3-hexbin": "^0.2.3",
+    "@types/faker": "^5.1.0",
     "@types/lodash": "^4.14.159",
-    "@types/reactstrap": "^8.5.0"
+    "@types/reactstrap": "^8.5.0",
+    "faker": "^5.1.0"
   }
 }

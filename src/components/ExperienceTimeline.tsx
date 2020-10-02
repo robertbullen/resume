@@ -1,11 +1,11 @@
 import * as d3 from 'd3';
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import useResizeObserver from 'use-resize-observer';
-import { Experience, ResumeProps } from '../resume';
+import { Experience, ResumeProps } from '../resume/resume-model';
 
 type Props = ResumeProps;
 
-export const ExperienceTimeline: FC<Props> = (props: Props) => {
+export function ExperienceTimeline(props: Props) {
 	const { height, ref } = useResizeObserver<HTMLDivElement>();
 
 	function startOfYear(date: Date): number {
@@ -107,4 +107,4 @@ export const ExperienceTimeline: FC<Props> = (props: Props) => {
 			</svg>
 		</div>
 	);
-};
+}

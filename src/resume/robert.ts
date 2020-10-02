@@ -1,105 +1,34 @@
-export interface ContactService {
-	fontAwesomeClassNames: string;
-	handle: string;
-	name: string;
-	url: string;
-}
+import { ResumeModel } from './resume-model';
 
-export interface Candidate {
-	contactServices: ContactService[];
-	name: string;
-}
-
-export interface Interest {
-	column: number;
-	row: number;
-	name: string;
-}
-
-export type InterestsRecord = Record<string, Interest[]>;
-
-export interface SkillRating {
-	rating: number;
-	skill: string;
-}
-
-export function getRating(skillRating: SkillRating): number {
-	return skillRating.rating;
-}
-
-export function getSkill(skillRating: SkillRating): string {
-	return skillRating.skill;
-}
-
-export const skillRatingMax = 5;
-
-export function skillRatingLevels(): SkillRating[] {
-	return [
-		{ rating: 0.5, skill: 'Capable' },
-		{ rating: 2.5, skill: 'Proficient' },
-		{ rating: 4.5, skill: 'Expert' },
-		// { rating: 0, skill: '0' },
-		// { rating: 1, skill: '1' },
-		// { rating: 2, skill: '2' },
-		// { rating: 3, skill: '3' },
-		// { rating: 4, skill: '4' },
-		// { rating: 5, skill: '5' },
-	];
-}
-
-export type SkillCategoriesRecord = Record<string, SkillRating[] | undefined>;
-
-export interface Experience {
-	finishDate?: Date;
-	highlights: string[];
-	organization: string;
-	role: string;
-	startDate: Date;
-}
-
-export interface Resume {
-	candidate: Candidate;
-	experiences: Experience[];
-	interests: InterestsRecord;
-	mission: string;
-	skills: SkillCategoriesRecord;
-}
-
-const useSquareIcons = true;
-
-export const robert: Resume = {
+export const robert: ResumeModel = {
 	candidate: {
 		contactServices: [
 			{
-				fontAwesomeClassNames: useSquareIcons ? 'fas fa-phone-square' : 'fas fa-mobile-alt',
 				handle: '952-994-6216',
 				name: 'Phone',
 				url: 'tel:+19529946216',
 			},
 			{
-				fontAwesomeClassNames: useSquareIcons
-					? 'fas fa-envelope-square'
-					: 'fas fa-envelope',
 				handle: 'robert@robertbullen.com',
 				name: 'Email',
 				url: 'mailto:robert@robertbullen.com',
 			},
 			{
-				fontAwesomeClassNames: useSquareIcons ? 'fab fa-dribbble-square' : 'fas fa-globe',
 				handle: 'https://robertbullen.com',
 				name: 'Website',
 				url: 'https://robertbullen.com',
 			},
 			{
-				fontAwesomeClassNames: useSquareIcons
-					? 'fab fa-github-square'
-					: 'fab fa-github-alt',
 				handle: '@robertbullen',
 				name: 'GitHub',
 				url: 'https://github.com/robertbullen',
 			},
 			{
-				fontAwesomeClassNames: useSquareIcons ? 'fab fa-twitter-square' : 'fab fa-twitter',
+				handle: 'Robert Bullen',
+				name: 'LinkedIn',
+				url: 'https://www.linkedin.com/in/robertbullen/',
+			},
+			{
 				handle: '@BullenRobert',
 				name: 'Twitter',
 				url: 'https://twitter.com/BullenRobert',
@@ -141,7 +70,7 @@ export const robert: Resume = {
 			{
 				column: 1,
 				row: 3,
-				name: 'Web Services',
+				name: 'Unit Testing',
 			},
 			{
 				column: 2,
@@ -151,7 +80,7 @@ export const robert: Resume = {
 			{
 				column: 2,
 				row: 4,
-				name: 'Unit Testing',
+				name: 'Web Services',
 			},
 			{
 				column: 3,
@@ -183,12 +112,12 @@ export const robert: Resume = {
 			{
 				column: 4,
 				row: 4,
-				name: 'Design Patterns',
+				name: 'Architecture',
 			},
 			{
 				column: 5,
 				row: 3,
-				name: 'Architecture',
+				name: 'Design Patterns',
 			},
 			{
 				column: 6,
@@ -208,7 +137,7 @@ export const robert: Resume = {
 			{
 				column: 7,
 				row: 3,
-				name: 'Creative Interests',
+				name: '???',
 			},
 			{
 				column: 8,
@@ -218,22 +147,27 @@ export const robert: Resume = {
 			{
 				column: 8,
 				row: 2,
-				name: 'Photography',
+				name: 'Creative Interests',
 			},
 			{
 				column: 9,
 				row: 1,
-				name: 'Video Creation',
+				name: 'Photo-graphy',
+			},
+			{
+				column: 9,
+				row: 3,
+				name: 'Music',
 			},
 			{
 				column: 10,
 				row: 2,
-				name: 'Music',
+				name: 'Video-graphy',
 			},
 		],
 	},
 	mission:
-		'Robert leverages his analytical and creative talents to the fullest when designing and writing modern full stack applications. He is enthusiastic and experienced when it comes to discovering promising software development technologies and adopting best practices.',
+		'Robert leverages his analytical and creative talents to the fullest when designing and writing modern full stack applications. He is experienced with and enthusiastic about discovering and adopting promising software development technologies and practices.',
 	skills: {
 		'Soft Skills': [
 			{ rating: 4.0, skill: 'End User Focus' },
@@ -246,20 +180,23 @@ export const robert: Resume = {
 			{ rating: 3.5, skill: 'AWS' },
 			{ rating: 3.5, skill: 'CI/CD' },
 			{ rating: 4.5, skill: 'Design Patterns' },
-			{ rating: 3.5, skill: 'REST' },
+			{ rating: 4.0, skill: 'OOP' },
+			{ rating: 3.5, skill: 'REST APIs' },
 		],
-		'Software Engineering': [
-			{ rating: 2.0, skill: 'D3' },
-			{ rating: 4.0, skill: 'Express' },
+		'Programming Languages': [
 			{ rating: 4.0, skill: 'HTML+CSS' },
 			{ rating: 4.5, skill: 'JavaScript' },
-			{ rating: 4.0, skill: 'Node.js' },
-			{ rating: 4.0, skill: 'OOP' },
 			{ rating: 2.5, skill: 'Python' },
-			{ rating: 3.0, skill: 'React' },
 			{ rating: 3.0, skill: 'SQL' },
 			{ rating: 5.0, skill: 'TypeScript' },
-			{ rating: 4.0, skill: 'Unit Testing' },
+		],
+		'JavaScript Frameworks': [
+			{ rating: 1.5, skill: 'Angular' },
+			{ rating: 2.0, skill: 'D3' },
+			{ rating: 4.0, skill: 'Express' },
+			{ rating: 4.0, skill: 'Node.js' },
+			{ rating: 3.0, skill: 'React' },
+			{ rating: 4.0, skill: 'Jest' },
 			{ rating: 3.0, skill: 'Vue' },
 		],
 		'Packet Analysis': [
@@ -270,7 +207,3 @@ export const robert: Resume = {
 		],
 	},
 };
-
-export interface ResumeProps {
-	resume: Resume;
-}

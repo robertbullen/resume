@@ -1,8 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;1,300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;1,300&display=swap');
 
 :root {
 	--color-background: white;
-	--color-accent: #ff7300;
+	--color-accent: #ff7f00;
 	--color-low-contrast: #888888;
 	--color-high-contrast: #444444;
 
@@ -12,33 +12,35 @@
 	--color-high-contrast: #dddddd; */
 
 	--content-margin: 2rem;
+
+	/* Font family name variations are used instead of font weights due to a limitation of
+	CanvasRenderingContext2D.measureText(). */
+	--font-family-normal: 'Source Sans Pro Light', sans-serif;
+	--font-family-light: 'Source Sans Pro Extralight', sans-serif;
+
 	--font-size-smaller: 87.5%;
-	--font-weight-light: 200;
-	--font-weight-normal: 300;
-	--font-weight-bold: 400;
 }
 
 body {
 	background-color: var(--color-background);
 	color: var(--color-high-contrast);
-	font-family: 'Source Sans Pro', sans-serif;
-	font-weight: var(--font-weight-normal);
+	font-family: var(--font-family-normal);
 }
 
 h1 {
+	--measure-text-compensation-factor: 0.97;
 	color: var(--color-accent);
-	font-weight: var(--font-weight-light);
+	font-family: var(--font-family-light);
 	letter-spacing: -0.045em;
 	line-height: 100%;
 	margin: -0.09em 0 0 -0.09em;
-	max-height: 6rem;
+	max-height: 90px;
 	text-transform: uppercase;
-	--canvas-measure-compensation: 0.94;
 }
 
 h2 {
 	font-size: 133%;
-	font-weight: var(--font-weight-light);
+	font-family: var(--font-family-light);
 	text-transform: uppercase;
 	white-space: nowrap;
 }
@@ -91,7 +93,7 @@ section {
 }
 
 .interests-honeycomb-component g.hexagons {
-	opacity: 0.75;
+	opacity: 0.85;
 	/* stroke: var(--color-background);
 	stroke-width: 0.125rem; */
 }
@@ -102,11 +104,10 @@ section {
 
 .interests-honeycomb-component g.hexagons[data-cluster='Analytical Pursuits'] .cluster {
 	fill: none;
-	stroke: var(--color-accent);
-	stroke-width: 0.25rem;
 }
 
 .interests-honeycomb-component g.labels[data-cluster='Analytical Pursuits'] .cluster {
+	color: var(--color-accent);
 	fill: var(--color-accent);
 	text-transform: uppercase;
 }
@@ -117,17 +118,18 @@ section {
 
 .interests-honeycomb-component g.hexagons[data-cluster='Creative Interests'] .cluster {
 	fill: none;
-	stroke: var(--color-low-contrast);
-	stroke-width: 0.25rem;
 }
 
 .interests-honeycomb-component g.labels[data-cluster='Creative Interests'] .cluster {
-	text-transform: uppercase;
+	color: var(--color-low-contrast);
 	fill: var(--color-low-contrast);
+	text-transform: uppercase;
 }
 
 .interests-honeycomb-component g.labels {
+	color: var(--color-background);
 	fill: var(--color-background);
+	line-height: 100%;
 	text-transform: lowercase;
 }
 
