@@ -56,7 +56,7 @@ export const robert: ResumeModel = {
 		},
 	],
 	interests: {
-		'Analytical Pursuits': [
+		Analytical: [
 			{
 				column: 0,
 				row: 2,
@@ -75,7 +75,7 @@ export const robert: ResumeModel = {
 			{
 				column: 2,
 				row: 2,
-				name: 'Analytical Pursuits',
+				name: 'Analytical',
 			},
 			{
 				column: 2,
@@ -108,7 +108,7 @@ export const robert: ResumeModel = {
 				name: 'User Interface Design',
 			},
 		],
-		'Creative Interests': [
+		Creative: [
 			{
 				column: 4,
 				row: 4,
@@ -147,12 +147,12 @@ export const robert: ResumeModel = {
 			{
 				column: 8,
 				row: 2,
-				name: 'Creative Interests',
+				name: 'Creative',
 			},
 			{
 				column: 9,
 				row: 1,
-				name: 'Photo-graphy',
+				name: 'Photography',
 			},
 			{
 				column: 9,
@@ -162,7 +162,7 @@ export const robert: ResumeModel = {
 			{
 				column: 10,
 				row: 2,
-				name: 'Video-graphy',
+				name: 'Videography',
 			},
 		],
 	},

@@ -2,7 +2,7 @@ import React from 'react';
 import { ResumeProps } from '../resume/resume-model';
 import { Candidate } from './Candidate';
 import { ExperienceTimeline } from './ExperienceTimeline';
-import { InterestsHoneycomb } from './InterestsHexGrid';
+import { InterestsHexGrid } from './InterestsHexGrid';
 import { Mission } from './Mission';
 import { generateSectionId, Section } from './Section';
 import { SkillRatingsChart } from './SkillRatingsChart';
@@ -21,8 +21,8 @@ export function Resume(props: ResumeProps) {
 				</header>
 				<main className="gap-8 grid grid-cols-1 lg:grid-cols-2">
 					<div>
-						<Section heading="Pursuits & Interests" id="pursuits-interests">
-							<InterestsHoneycomb {...props} />
+						<Section heading="Analytical & Creative Interests" id="interests">
+							<InterestsHexGrid {...props} />
 						</Section>
 						<div className="gap-4 grid grid-cols-1 sm:grid-cols-2">
 							{Object.keys(props.resume.skills).map((skillCategory: string) => (

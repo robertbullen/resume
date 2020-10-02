@@ -10,7 +10,7 @@ import { Interest, ResumeProps } from '../resume/resume-model';
 
 const debug = false;
 
-export function InterestsHoneycomb(props: ResumeProps) {
+export function InterestsHexGrid(props: ResumeProps) {
 	const { ref: divRef, width } = useResizeObserver<HTMLDivElement>();
 
 	interface HexGridDimensions {
@@ -25,9 +25,9 @@ export function InterestsHoneycomb(props: ResumeProps) {
 		let result: HexGridDimensions | undefined;
 		if (width) {
 			const allInterests: Interest[] = Object.values(props.resume.interests).flat();
-			const columns =
+			const columns: number =
 				Math.max(...allInterests.map((interest: Interest): number => interest.column)) + 1;
-			const rows =
+			const rows: number =
 				Math.max(...allInterests.map((interest: Interest): number => interest.row)) + 1;
 
 			const hexagonRadius: number = calcRadiusToFitColumns(width, columns);
@@ -54,15 +54,15 @@ export function InterestsHoneycomb(props: ResumeProps) {
 	const rotationDegrees = 0;
 
 	return (
-		<div className="interests-honeycomb-component" ref={divRef}>
+		<div className="interests-hexgrid-component" ref={divRef}>
 			<svg
 				style={{ height: hexGridDimensions?.height, width: '100%' }}
 				transform={`rotate(${rotationDegrees})`}
 			>
 				<g transform={`scale(0.9) translate(${(width ?? 0) * 0.05})`}>
 					{Object.entries(props.resume.interests).map(
-						([cluster, interests]: [string, Interest[]]) => (
-							<g className="hexagons" data-cluster={cluster} key={cluster}>
+						([cluster, interests]: [string, Interest[]], clusterIndex: number) => (
+							<g className="hexagons" data-cluster-index={clusterIndex} key={cluster}>
 								{interests.map((interest: Interest) => {
 									const center: Point = calcCenter(
 										hexGridDimensions?.hexagonRadius ?? 0,
@@ -114,8 +114,8 @@ export function InterestsHoneycomb(props: ResumeProps) {
 					)}
 
 					{Object.entries(props.resume.interests).map(
-						([cluster, interests]: [string, Interest[]]) => (
-							<g className="labels" data-cluster={cluster} key={cluster}>
+						([cluster, interests]: [string, Interest[]], clusterIndex: number) => (
+							<g className="labels" data-cluster-index={clusterIndex} key={cluster}>
 								{interests.map((interest: Interest) => {
 									const center: Point = calcCenter(
 										hexGridDimensions?.hexagonRadius ?? 0,
