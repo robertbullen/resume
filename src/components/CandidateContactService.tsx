@@ -35,7 +35,7 @@ interface Props {
 export function CandidateContactService(props: Props) {
 	const actualProps = props as Required<Props>;
 	return (
-		<div className="candidate-contact-service-component overflow-hidden">
+		<div className="candidate-contact-service-component truncate">
 			<a
 				href={actualProps.contactService.url}
 				style={{ whiteSpace: 'nowrap' }}
