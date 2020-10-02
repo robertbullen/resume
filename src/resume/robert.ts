@@ -175,6 +175,7 @@ export const robert: ResumeModel = {
 			{ rating: 4.0, skill: 'Cont. Learning' },
 			{ rating: 4.0, skill: 'Mentorship' },
 			{ rating: 4.0, skill: 'Presenting' },
+			{ rating: 4.0, skill: 'Self-Motivating' },
 		],
 		'Architecture & Design': [
 			{ rating: 3.5, skill: 'AWS' },
@@ -183,7 +184,7 @@ export const robert: ResumeModel = {
 			{ rating: 4.0, skill: 'OOP' },
 			{ rating: 3.5, skill: 'REST APIs' },
 		],
-		'Programming Languages': [
+		'Coding Languages': [
 			{ rating: 4.0, skill: 'HTML+CSS' },
 			{ rating: 4.5, skill: 'JavaScript' },
 			{ rating: 2.5, skill: 'Python' },

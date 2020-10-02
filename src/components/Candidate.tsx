@@ -11,7 +11,7 @@ export function Candidate(props: ResumeProps) {
 
 	return (
 		<div className="candidate-component">
-			<div ref={parentRef} style={{ maxWidth: '100%' }}>
+			<div ref={parentRef} style={{ display: 'inline-block', maxWidth: '100%' }}>
 				<h1
 					ref={childRef}
 					style={{
@@ -21,7 +21,7 @@ export function Candidate(props: ResumeProps) {
 				>
 					{props.resume.candidate.name}
 				</h1>
-				<ul>
+				<ul className="gap-x-2 grid grid-cols-2 sm:grid-cols-3">
 					{props.resume.candidate.contactServices.map(
 						(contactService: ContactService) => (
 							<li key={contactService.url}>

@@ -35,8 +35,12 @@ interface Props {
 export function CandidateContactService(props: Props) {
 	const actualProps = props as Required<Props>;
 	return (
-		<div className="candidate-contact-service-component">
-			<a href={actualProps.contactService.url} title={actualProps.contactService.name}>
+		<div className="candidate-contact-service-component overflow-hidden">
+			<a
+				href={actualProps.contactService.url}
+				style={{ whiteSpace: 'nowrap' }}
+				title={actualProps.contactService.name}
+			>
 				<i
 					className={
 						actualProps.iconCssClasses[actualProps.contactService.name] ??

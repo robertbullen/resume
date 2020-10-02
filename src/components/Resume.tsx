@@ -1,69 +1,49 @@
 import React from 'react';
-import { Col, Container, Row } from 'reactstrap';
 import { ResumeProps } from '../resume/resume-model';
 import { Candidate } from './Candidate';
 import { ExperienceTimeline } from './ExperienceTimeline';
 import { InterestsHoneycomb } from './InterestsHexGrid';
 import { Mission } from './Mission';
-import './Resume.css';
 import { generateSectionId, Section } from './Section';
 import { SkillRatingsChart } from './SkillRatingsChart';
 
 export function Resume(props: ResumeProps) {
 	return (
-		<>
-			<header>
-				<Container>
-					<Row>
-						<Col xl={6} xs={12}>
-							<Section id="candidate">
-								<Candidate {...props} />
-							</Section>
-						</Col>
-						<Col xl={6} xs={12}>
-							<Section id="mission">
-								<Mission {...props} />
-							</Section>
-						</Col>
-					</Row>
-				</Container>
-			</header>
-			<main>
-				<Container>
-					<Row>
-						<Col xl={6} xs={12}>
-							<Row>
-								<Col>
-									<Section heading="Pursuits & Interests" id="pursuits-interests">
-										<InterestsHoneycomb {...props} />
-									</Section>
-								</Col>
-							</Row>
-							<Row>
-								{Object.keys(props.resume.skills).map((skillCategory: string) => (
-									<Col key={skillCategory} md={6} xs={12}>
-										<Section
-											heading={skillCategory}
-											id={generateSectionId(skillCategory)}
-										>
-											<SkillRatingsChart
-												{...props}
-												skillCategory={skillCategory}
-											/>
-										</Section>
-									</Col>
-								))}
-							</Row>
-						</Col>
-						<Col xl={6} xs={12}>
-							<Section heading="Experience" id="experience">
-								<ExperienceTimeline {...props} />
-							</Section>
-						</Col>
-					</Row>
-				</Container>
-			</main>
-			<footer></footer>
-		</>
+		<div className="p-4 sm:p-8">
+			<div className="container gap-8 grid grid-cols-1 mx-auto resume-component">
+				<header className="gap-8 grid grid-cols-1 lg:grid-cols-2">
+					<Section id="candidate">
+						<Candidate {...props} />
+					</Section>
+					<Section id="mission">
+						<Mission {...props} />
+					</Section>
+				</header>
+				<main className="gap-8 grid grid-cols-1 lg:grid-cols-2">
+					<div>
+						<Section heading="Pursuits & Interests" id="pursuits-interests">
+							<InterestsHoneycomb {...props} />
+						</Section>
+						<div className="gap-4 grid grid-cols-1 sm:grid-cols-2">
+							{Object.keys(props.resume.skills).map((skillCategory: string) => (
+								<Section
+									heading={skillCategory}
+									id={generateSectionId(skillCategory)}
+									key={skillCategory}
+								>
+									<SkillRatingsChart {...props} skillCategory={skillCategory} />
+								</Section>
+							))}
+						</div>
+					</div>
+					<div>
+						<Section heading="Experience" id="experience">
+							<ExperienceTimeline {...props} />
+						</Section>
+					</div>{' '}
+				</main>
+				<footer></footer>
+			</div>
+		</div>
 	);
 }

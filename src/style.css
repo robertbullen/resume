@@ -11,8 +11,6 @@
 	--color-low-contrast: #999999;
 	--color-high-contrast: #dddddd; */
 
-	--content-margin: 2rem;
-
 	/* Font family name variations are used instead of font weights due to a limitation of
 	CanvasRenderingContext2D.measureText(). */
 	--font-family-normal: 'Source Sans Pro Light', sans-serif;
@@ -31,6 +29,7 @@ h1 {
 	--measure-text-compensation-factor: 0.97;
 	color: var(--color-accent);
 	font-family: var(--font-family-light);
+	font-size: 200%;
 	letter-spacing: -0.045em;
 	line-height: 100%;
 	margin: -0.09em 0 0 -0.09em;
@@ -45,34 +44,12 @@ h2 {
 	white-space: nowrap;
 }
 
-header {
-	margin-top: var(--content-margin);
-}
-
-section {
-	margin-bottom: var(--content-margin);
-}
-
-.candidate-component > div {
-	display: inline-block;
-}
-
-.candidate-component > div > ul {
-	display: flex;
-	flex-wrap: wrap;
-	list-style-type: none;
-	margin-bottom: 0;
-	padding-left: 0;
-}
-
-.candidate-component > div > ul > li {
+.candidate-contact-service-component {
 	font-size: var(--font-size-smaller);
-	margin-right: var(--content-margin);
 }
 
 .candidate-contact-service-component a {
 	color: var(--color-high-contrast);
-	white-space: nowrap;
 }
 
 .candidate-contact-service-component a > i {
