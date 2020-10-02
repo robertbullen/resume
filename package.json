@@ -21,7 +21,7 @@
 		"react-intersection-observer": "^8.27.1",
 		"react-scripts": "3.4.3",
 		"tailwindcss": "^1.8.10",
-		"typescript": "^4.0.3",
+		"typescript": "^3.9.7",
 		"use-resize-observer": "^6.1.0"
 	},
 	"devDependencies": {
