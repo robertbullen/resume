@@ -64,53 +64,60 @@ h2 {
 	text-align: justify;
 }
 
-.interests-hexgrid-component g[data-cluster-index='0'] {
-	transform: translate(-0.5rem, 0);
-}
-
-.interests-hexgrid-component g[data-cluster-index='1'] {
-	transform: translate(0.5rem, 0);
-}
-
+/* Make all hexagons slightly transparent. */
 .interests-hexgrid-component g.hexagons {
 	opacity: 0.85;
-	/* stroke: var(--color-background);
-	stroke-width: 0.125rem; */
 }
 
-.interests-hexgrid-component g.hexagons[data-cluster-index='0'] {
+/* Fill the hexagons according to the cluster they inhabit. */
+.interests-hexgrid-component g.hexagons g.cluster:nth-of-type(1) {
 	fill: var(--color-accent);
 }
-
-.interests-hexgrid-component g.hexagons[data-cluster-index='0'] .cluster {
-	fill: none;
+.interests-hexgrid-component g.hexagons g.cluster:nth-of-type(2) {
+	fill: var(--color-low-contrast);
 }
 
-.interests-hexgrid-component g.labels[data-cluster-index='0'] .cluster {
+/* Give a default style to all labels. */
+.interests-hexgrid-component g.labels {
+	color: var(--color-background);
+	fill: var(--color-background);
+	line-height: 112.5%;
+	text-transform: lowercase;
+}
+
+/* Style cluster-name hexagons and their labels distinctly. */
+.interests-hexgrid-component g.hexagons g.hexagon.cluster-name path:nth-of-type(2) {
+	fill: var(--color-background);
+}
+.interests-hexgrid-component g.labels g.cluster:nth-of-type(1) g.label.cluster-name {
 	color: var(--color-accent);
 	fill: var(--color-accent);
 	text-transform: uppercase;
 }
-
-.interests-hexgrid-component g.hexagons[data-cluster-index='1'] {
-	fill: var(--color-low-contrast);
-}
-
-.interests-hexgrid-component g.hexagons[data-cluster-index='1'] .cluster {
-	fill: none;
-}
-
-.interests-hexgrid-component g.labels[data-cluster-index='1'] .cluster {
+.interests-hexgrid-component g.labels g.cluster:nth-of-type(2) g.label.cluster-name {
 	color: var(--color-low-contrast);
 	fill: var(--color-low-contrast);
 	text-transform: uppercase;
 }
 
-.interests-hexgrid-component g.labels {
-	color: var(--color-background);
-	fill: var(--color-background);
-	line-height: 100%;
-	text-transform: lowercase;
+/* Apply some transformations for added visual interest:
+   - rotate the whole diagram 15 degrees, and then compensate the labels so they remain horizontal
+   - separate the two clusters a little bit
+*/
+.interests-hexgrid-component g.root {
+	transform: rotate(15deg) scale(0.95) translateY(1rem);
+	transform-origin: center;
+}
+.interests-hexgrid-component g.label {
+	transform: rotate(-15deg);
+	transform-origin: center;
+	transform-box: fill-box;
+}
+.interests-hexgrid-component g.cluster:nth-of-type(1) {
+	transform: translate(-0.5rem, 0);
+}
+.interests-hexgrid-component g.cluster:nth-of-type(2) {
+	transform: translate(0.5rem, 0);
 }
 
 .skill-ratings-chart-component {

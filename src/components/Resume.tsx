@@ -20,7 +20,7 @@ export function Resume(props: ResumeProps) {
 					</Section>
 				</header>
 				<main className="gap-8 grid grid-cols-1 lg:grid-cols-2">
-					<div>
+					<div className="gap-8 grid grid-cols-1">
 						<Section heading="Analytical & Creative Interests" id="interests">
 							<InterestsHexGrid {...props} />
 						</Section>

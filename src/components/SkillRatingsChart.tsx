@@ -177,7 +177,7 @@ export function SkillRatingsChart(props: Props) {
 
 			const xLabels = new Rectangle({
 				x: chart.x,
-				y: chart.bottom - xLabelsHeight,
+				y: chart.bottom() - xLabelsHeight,
 				width: chart.width,
 				height: xLabelsHeight,
 			});
@@ -206,7 +206,7 @@ export function SkillRatingsChart(props: Props) {
 			const scale = d3
 				.scaleLinear()
 				.domain([0, skillRatingMax])
-				.range([regions.plot.x, regions.plot.right]);
+				.range([regions.plot.x, regions.plot.right()]);
 			result = {
 				getX(skillRating: SkillRating): number {
 					return scale(skillRating.rating);
@@ -239,7 +239,7 @@ export function SkillRatingsChart(props: Props) {
 					return [
 						new Point({ x: x0, y: regions.plot.y }),
 						new Point({ x: x0, y: regions.xLabels.y }),
-						new Point({ x: x0 - adjacent, y: regions.xLabels.bottom }),
+						new Point({ x: x0 - adjacent, y: regions.xLabels.bottom() }),
 					].join(' ');
 				},
 			};
@@ -312,7 +312,7 @@ export function SkillRatingsChart(props: Props) {
 				sortDuration: durations.medium,
 				sortTransition: 'sort',
 				textAnchor: 'end',
-				x: regions.yLabels.right,
+				x: regions.yLabels.right(),
 				y: (_skillRating: SkillRating, skillIndex: number): number =>
 					skillIndex * yLabelsGroup.lineHeight! + yLabelsGroup.fontSize!,
 			};
@@ -437,10 +437,7 @@ export function SkillRatingsChart(props: Props) {
 						<stop offset="1" stopColor="white" stopOpacity="0" />
 					</linearGradient>
 					<mask id={xGridMaskId}>
-						<rect
-							fill={`url(#${xGridLinearGradientId})`}
-							{...regions?.chart.toJSON()}
-						/>
+						<rect fill={`url(#${xGridLinearGradientId})`} {...regions?.chart} />
 					</mask>
 
 					{/* Fade in the bars from left to right with a transparency mask. */}
@@ -449,7 +446,7 @@ export function SkillRatingsChart(props: Props) {
 						<stop offset="1" stopColor="white" stopOpacity="1" />
 					</linearGradient>
 					<mask id={barsMaskId}>
-						<rect fill={`url(#${barsLinearGradientId})`} {...regions?.plot.toJSON()} />
+						<rect fill={`url(#${barsLinearGradientId})`} {...regions?.plot} />
 					</mask>
 				</defs>
 
@@ -457,7 +454,7 @@ export function SkillRatingsChart(props: Props) {
 					<g className="regions">
 						{regions &&
 							Object.entries(regions).map(([key, region]: [string, Rectangle]) => (
-								<rect key={key} fill="none" stroke="red" {...region?.toJSON()} />
+								<rect key={key} fill="none" stroke="red" {...region} />
 							))}
 					</g>
 				)}
