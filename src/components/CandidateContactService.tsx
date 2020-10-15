@@ -47,7 +47,7 @@ export function CandidateContactService(props: Props) {
 						actualProps.iconCssClasses.default
 					}
 				></i>
-				{actualProps.contactService.handle}
+				<span>{actualProps.contactService.handle}</span>
 			</a>
 		</div>
 	);

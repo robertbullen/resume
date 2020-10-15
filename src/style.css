@@ -104,11 +104,11 @@ h1 {
 	--measure-text-compensation-factor: 0.97;
 	color: var(--color-accent);
 	font-family: var(--font-family-light);
-	font-size: 200%;
+	font-size: 400%;
 	letter-spacing: -0.045em;
 	line-height: 100%;
-	margin: -0.09em 0 0 -0.09em;
-	max-height: 82px;
+	margin: -0.09em;
+	max-height: 128px;
 	text-transform: uppercase;
 }
 
@@ -120,11 +120,15 @@ h2 {
 }
 
 .candidate-contact-service-component {
-	font-size: var(--font-size-smaller);
+	color: var(--color-high-contrast);
 }
 
-.candidate-contact-service-component a {
-	color: var(--color-high-contrast);
+.candidate-contact-service-component a:hover {
+	text-decoration: underline;
+}
+
+.candidate-contact-service-component a > * {
+	vertical-align: middle;
 }
 
 .candidate-contact-service-component a > i {
@@ -132,9 +136,12 @@ h2 {
 	margin-right: 0.25rem;
 }
 
+.candidate-contact-service-component a > span {
+	font-size: var(--font-size-smaller);
+}
+
 .mission-component p {
 	font-size: var(--font-size-larger);
-	font-style: italic;
 	text-align: justify;
 }
 

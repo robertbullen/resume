@@ -7,9 +7,7 @@ export interface UseComputedStyleResult<TElement extends Element> {
 }
 
 /**
- * A React hook that returns an element and its computed style via a ref.
- *
- * Use as follows:
+ * A React hook that returns an element and its computed style via a ref. Use as follows:
  *
  * ```javascript
  * function MyComponent() {
