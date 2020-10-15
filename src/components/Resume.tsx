@@ -10,8 +10,8 @@ import { SkillRatingsChart } from './SkillRatingsChart';
 export function Resume(props: ResumeProps) {
 	return (
 		<div className="p-4 sm:p-8">
-			<div className="container gap-8 grid grid-cols-1 mx-auto resume-component">
-				<header className="gap-8 grid grid-cols-1 lg:grid-cols-2">
+			<div className="container gap-12 grid grid-cols-1 mx-auto resume-component">
+				<header className="gap-x-12 gap-y-6 grid grid-cols-1 lg:grid-cols-2">
 					<Section id="candidate">
 						<Candidate {...props} />
 					</Section>
@@ -19,8 +19,8 @@ export function Resume(props: ResumeProps) {
 						<Mission {...props} />
 					</Section>
 				</header>
-				<main className="gap-8 grid grid-cols-1 lg:grid-cols-2">
-					<div className="gap-8 grid grid-cols-1">
+				<main className="gap-12 grid grid-cols-1 lg:grid-cols-2">
+					<div className="gap-12 grid grid-cols-1">
 						<Section heading="Analytical & Creative Interests" id="interests">
 							<InterestsHexGrid {...props} />
 						</Section>
