@@ -1,4 +1,8 @@
+# Standard ignores.
+build/
 node_modules/
-src/tailwind.output.css
-
 yarn-error.log
+
+# Ignore generated files.
+public/robert.output.json
+src/tailwind.output.css

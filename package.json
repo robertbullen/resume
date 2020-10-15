@@ -37,6 +37,7 @@
 		"@types/react-dom": "^16.9.0",
 		"@types/reactstrap": "^8.5.0",
 		"react-scripts": "3.4.3",
+		"ts-node": "^9.0.0",
 		"typescript": "^3.9.7"
 	},
 	"eslintConfig": {
@@ -45,10 +46,11 @@
 	"private": true,
 	"scripts": {
 		"build": "react-scripts build",
-		"build:tailwind": "tailwindcss build src/tailwind.css --output src/tailwind.output.css",
+		"build:robert-output-json": "ts-node-script scripts/build-resume-json.ts src/resume/robert.ts --outputs public/robert.output.json",
+		"build:tailwind-output-css": "tailwindcss build src/tailwind.css --output src/tailwind.output.css",
 		"eject": "react-scripts eject",
-		"prebuild": "yarn build:tailwind",
-		"prestart": "yarn build:tailwind",
+		"prebuild": "yarn build:robert-output-json && yarn build:tailwind-output-css",
+		"prestart": "yarn build:robert-output-json && yarn build:tailwind-output-css",
 		"start": "react-scripts start",
 		"test": "react-scripts test"
 	},
