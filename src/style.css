@@ -186,7 +186,7 @@ h2 {
    - separate the two clusters a little bit
 */
 .interests-hexgrid-component g.root {
-	transform: rotate(15deg) scale(0.95) translateY(1rem);
+	transform: rotate(15deg) scale(0.98) translate(0.25rem, 0.75rem);
 	transform-origin: center;
 }
 .interests-hexgrid-component g.label {

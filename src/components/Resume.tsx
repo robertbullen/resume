@@ -1,11 +1,12 @@
 import React from 'react';
 import { ResumeProps } from '../resume/resume-model';
-import { Candidate } from './Candidate';
+import { CandidateContactServiceList } from './CandidateContactServiceList';
+import { CandidateName } from './CandidateName';
 import { ExperienceTimeline } from './ExperienceTimeline';
 import { InterestsHexGrid } from './InterestsHexGrid';
 import { Mission } from './Mission';
-import { generateSectionId, Section } from './Section';
-import { SkillRatingsChart } from './SkillRatingsChart';
+import { Section } from './Section';
+import { SkillRatingsChartList } from './SkillRatingsChartList';
 
 export function Resume(props: ResumeProps) {
 	return (
@@ -13,7 +14,8 @@ export function Resume(props: ResumeProps) {
 			<div className="container gap-12 grid grid-cols-1 mx-auto resume-component">
 				<header className="gap-x-12 gap-y-6 grid grid-cols-1 lg:grid-cols-2">
 					<Section id="candidate">
-						<Candidate {...props} />
+						<CandidateName {...props} />
+						<CandidateContactServiceList {...props} />
 					</Section>
 					<Section id="mission">
 						<Mission {...props} />
@@ -25,22 +27,14 @@ export function Resume(props: ResumeProps) {
 							<InterestsHexGrid {...props} />
 						</Section>
 						<div className="gap-4 grid grid-cols-1 sm:grid-cols-2">
-							{Object.keys(props.resume.skills).map((skillCategory: string) => (
-								<Section
-									heading={skillCategory}
-									id={generateSectionId(skillCategory)}
-									key={skillCategory}
-								>
-									<SkillRatingsChart {...props} skillCategory={skillCategory} />
-								</Section>
-							))}
+							<SkillRatingsChartList {...props} />
 						</div>
 					</div>
 					<div>
 						<Section heading="Experience" id="experience">
 							<ExperienceTimeline {...props} />
 						</Section>
-					</div>{' '}
+					</div>
 				</main>
 				<footer></footer>
 			</div>
