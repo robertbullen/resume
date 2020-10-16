@@ -5,6 +5,7 @@ import { HexGrid } from '../drawing/hex-grid';
 import { Hexagon } from '../drawing/hexagon';
 import { sideOfSquareInCircle } from '../drawing/inscriptions';
 import { measureText } from '../drawing/measure-text';
+import { Point } from '../drawing/point';
 import { Rectangle } from '../drawing/rectangle';
 import { useMeasureTextParams } from '../hooks/use-measure-text-params';
 import { Interest, ResumeProps } from '../resume/resume-model';
@@ -63,6 +64,27 @@ export function InterestsHexGrid(props: ResumeProps) {
 		return result;
 	}, [div, labelsGroup.measureTextParams, labelsGroup.style, props.resume.interests, width]);
 
+	function calcAnimationOffsetStyle(
+		dimensions: HexGridDimensions | undefined,
+		hexagon: Hexagon | undefined,
+	): object | undefined {
+		if (!dimensions || !hexagon) {
+			return undefined;
+		}
+
+		const topLeft = new Point();
+		const bottomRight = new Point({ x: dimensions.width, y: dimensions.height });
+		return {
+			style: {
+				'--animation-offset':
+					Point.distance(topLeft, {
+						x: hexagon.cx ?? 0,
+						y: hexagon.cy ?? 0,
+					}) / Point.distance(topLeft, bottomRight),
+			},
+		};
+	}
+
 	return (
 		<div className="interests-hexgrid-component" ref={divRef}>
 			<svg style={{ height: hexGridDimensions?.height, width: '100%' }}>
@@ -74,10 +96,7 @@ export function InterestsHexGrid(props: ResumeProps) {
 									{interests.map((interest: Interest) => {
 										const hexagon:
 											| Hexagon
-											| undefined = hexGridDimensions?.grid.hexagon(
-											interest.column,
-											interest.row,
-										);
+											| undefined = hexGridDimensions?.grid.hexagon(interest);
 										const isClusterName: boolean = interest.name === cluster;
 										const hexagonOuterRadiusOffset = -1.5;
 										const hexagonInnerRadiusOffset = -5.5;
@@ -90,6 +109,10 @@ export function InterestsHexGrid(props: ResumeProps) {
 															'cluster-name': isClusterName,
 															'hexagon': true,
 														})}
+														{...calcAnimationOffsetStyle(
+															hexGridDimensions,
+															hexagon,
+														)}
 													>
 														<path
 															d={hexagon.toSvgPath(
@@ -136,10 +159,7 @@ export function InterestsHexGrid(props: ResumeProps) {
 									{interests.map((interest: Interest) => {
 										const hexagon:
 											| Hexagon
-											| undefined = hexGridDimensions?.grid.hexagon(
-											interest.column,
-											interest.row,
-										);
+											| undefined = hexGridDimensions?.grid.hexagon(interest);
 										const isClusterName: boolean = interest.name === cluster;
 										const textRectangle =
 											hexagon &&
@@ -161,6 +181,10 @@ export function InterestsHexGrid(props: ResumeProps) {
 															'cluster-name': isClusterName,
 															'label': true,
 														})}
+														{...calcAnimationOffsetStyle(
+															hexGridDimensions,
+															hexagon,
+														)}
 													>
 														{debug && (
 															<rect

@@ -92,6 +92,8 @@
 
 	--font-size-larger: 112.5%;
 	--font-size-smaller: 87.5%;
+
+	--hexgrid-rotation: 15deg;
 }
 
 body {
@@ -186,11 +188,15 @@ h2 {
    - separate the two clusters a little bit
 */
 .interests-hexgrid-component g.root {
-	transform: rotate(15deg) scale(0.98) translate(0.25rem, 0.75rem);
+	transform: rotate(var(--hexgrid-rotation)) scale(0.98) translate(0.25rem, 0.75rem);
 	transform-origin: center;
 }
+.interests-hexgrid-component g.hexagon {
+	transform-origin: center;
+	transform-box: fill-box;
+}
 .interests-hexgrid-component g.label {
-	transform: rotate(-15deg);
+	transform: rotate(calc(var(--hexgrid-rotation) * -1));
 	transform-origin: center;
 	transform-box: fill-box;
 }
@@ -199,6 +205,55 @@ h2 {
 }
 .interests-hexgrid-component g.cluster:nth-of-type(2) {
 	transform: translate(0.5rem, 0);
+}
+
+/* Animate in. */
+.interests-hexgrid-component g.hexagon,
+.interests-hexgrid-component g.label {
+	animation-delay: calc(var(--animation-offset) * 1s);
+	animation-duration: 2s;
+	animation-fill-mode: both;
+}
+.interests-hexgrid-component g.hexagon {
+	animation-name: animate-in-hexagon;
+}
+.interests-hexgrid-component g.label {
+	animation-name: animate-in-label;
+}
+@keyframes animate-in-hexagon {
+	0% {
+		transform: scale(0);
+	}
+
+	25% {
+		transform: scale(1.125);
+	}
+
+	50% {
+		transform: scale(0.875);
+	}
+
+	100% {
+		transform: scale(1);
+	}
+}
+
+@keyframes animate-in-label {
+	0% {
+		transform: rotate(calc(var(--hexgrid-rotation) * -1)) scale(0);
+	}
+
+	25% {
+		transform: rotate(calc(var(--hexgrid-rotation) * -1)) scale(1.125);
+	}
+
+	50% {
+		transform: rotate(calc(var(--hexgrid-rotation) * -1)) scale(0.875);
+	}
+
+	100% {
+		transform: rotate(calc(var(--hexgrid-rotation) * -1)) scale(1);
+	}
 }
 
 .skill-ratings-chart-component {

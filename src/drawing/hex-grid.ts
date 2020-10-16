@@ -1,5 +1,10 @@
 import { Hexagon } from './hexagon';
 
+export interface HexGridCoordinate {
+	column: number;
+	row: number;
+}
+
 /**
  * Encapsulates logic for working with double-width (pointy-topped) hexagonal grid [as opposed
  * to double-height (flat-topped) grid].
@@ -17,15 +22,20 @@ export class HexGrid {
 
 	public constructor(public readonly hexagonRadius: number) {}
 
-	public height(rows: number): number {
-		return rows > 0 ? 2 * this.hexagonRadius + (rows - 1) * 1.5 * this.hexagonRadius : 0;
+	public distance(a: HexGridCoordinate, b: HexGridCoordinate): number {
+		const dx: number = Math.abs(a.column - b.column);
+		const dy: number = Math.abs(a.row - b.row);
+		return dy + Math.max(0, (dx - dy) / 2);
 	}
 
-	public hexagon(column: number, row: number): Hexagon {
+	public hexagon(coordinate: HexGridCoordinate): Hexagon {
 		return new Hexagon({
-			cx: ((this.hexagonRadius * Math.sqrt(3)) / 2) * (column + 1),
-			cy: this.hexagonRadius + this.hexagonRadius * 1.5 * row,
+			cx: ((this.hexagonRadius * Math.sqrt(3)) / 2) * (coordinate.column + 1),
+			cy: this.hexagonRadius + this.hexagonRadius * 1.5 * coordinate.row,
 			r: this.hexagonRadius,
 		});
+	}
+	public height(rows: number): number {
+		return rows > 0 ? 2 * this.hexagonRadius + (rows - 1) * 1.5 * this.hexagonRadius : 0;
 	}
 }
