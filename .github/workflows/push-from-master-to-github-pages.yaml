@@ -21,4 +21,4 @@ jobs:
               run: |
                   git checkout -b github-pages
                   git merge master
-                  git push --set-upstream origin github-pages
+                  git push --force --set-upstream origin github-pages
