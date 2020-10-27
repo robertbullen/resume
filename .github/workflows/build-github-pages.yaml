@@ -33,5 +33,5 @@ jobs:
 
             - name: Commit changes
               run: |
-                  git commit -a 'updated docs directory'
+                  git commit --all --message='updated docs directory'
                   git push
