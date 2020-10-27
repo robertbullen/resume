@@ -15,9 +15,7 @@ jobs:
 
         steps:
             - name: Checkout master branch
-            - uses: actions/checkout@v2
-
-            - run: echo "Hello world!"
+              uses: actions/checkout@v2
 
             - name: Push from master branch to github-pages branch
               uses: github-actions-x/commit@v2.7
