@@ -50,7 +50,7 @@
 		"build": "react-scripts build",
 		"build:robert-output-json": "ts-node-script scripts/build-resume-json.ts src/resume/robert.ts --output public/robert.output.json",
 		"build:tailwind-output-css": "tailwindcss build src/tailwind.css --output src/tailwind.output.css",
-		"deploy": "gh-pages -d build",
+		"deploy": "gh-pages-clean && gh-pages -d build",
 		"eject": "react-scripts eject",
 		"prebuild": "yarn build:robert-output-json && yarn build:tailwind-output-css",
 		"prestart": "yarn build:robert-output-json && yarn build:tailwind-output-css",
