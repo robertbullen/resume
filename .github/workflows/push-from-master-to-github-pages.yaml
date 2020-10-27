@@ -1,0 +1,25 @@
+name: Push from master branch to github-pages branch
+
+on:
+    push:
+        branches:
+            - master
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        strategy:
+            matrix:
+                node-version: [12.x]
+
+        steps:
+            - name: Checkout
+            - uses: actions/checkout@v2
+
+            - name: Push from master branch to github-pages branch
+              uses: github-actions-x/commit@v2.7
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  push-branch: github-pages
+                  commit-message: push from master branch to github-pages branch
