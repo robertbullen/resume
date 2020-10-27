@@ -19,6 +19,6 @@ jobs:
 
             - name: Push from master branch to github-pages branch
               run: |
-                  git checkout -b github-actions
+                  git checkout -b github-pages
                   git merge master
-                  git push --set-upstream origin github-actions
+                  git push --set-upstream origin github-pages
