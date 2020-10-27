@@ -2,7 +2,7 @@ name: Build GitHub Pages
 
 on:
     push:
-        branches:
+        page_build:
             - github-pages
 
 jobs:
