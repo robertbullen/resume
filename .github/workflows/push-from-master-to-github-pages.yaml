@@ -15,5 +15,7 @@ jobs:
 
             - name: Push from master branch to github-pages branch
               run: |
+                  git config --global user.email "GitHub Actions"
+                  git config --global user.name "github-actions@github.com"
                   git checkout -b github-pages
                   git push --force --set-upstream origin github-pages
