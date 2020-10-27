@@ -14,8 +14,10 @@ jobs:
                 node-version: [12.x]
 
         steps:
-            - name: Checkout
+            - name: Checkout master branch
             - uses: actions/checkout@v2
+
+            - run: echo "Hello world!"
 
             - name: Push from master branch to github-pages branch
               uses: github-actions-x/commit@v2.7
