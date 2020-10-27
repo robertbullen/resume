@@ -1,0 +1,39 @@
+name: Build GitHub Pages
+
+on:
+    push:
+        branches:
+            - github-pages
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        strategy:
+            matrix:
+                node-version: [12.x]
+
+        steps:
+            - name: Checkout github-pages branch
+              uses: actions/checkout@v2
+
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+
+            - name: Install dependencies
+              run: yarn --frozen-lockfile
+
+            - name: Build website
+              run: yarn build
+
+            - name: Copy build to docs
+              run: cp -a build docs
+
+            - name: Commit changes
+              run: |
+                  git config user.name github-actions
+                  git config user-email github-actions@github.com
+                  git commit -a 'updated docs directory'
+                  git push
