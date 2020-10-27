@@ -2,7 +2,8 @@ name: Build GitHub Pages
 
 on:
     page_build:
-        - github-pages
+        branches:
+            - github-pages
 
 jobs:
     build:
