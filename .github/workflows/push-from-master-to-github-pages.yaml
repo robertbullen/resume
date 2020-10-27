@@ -21,4 +21,4 @@ jobs:
               run: |
                   git checkout -b github-actions
                   git merge master
-                  git push
+                  git push --set-upstream origin github-actions
