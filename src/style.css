@@ -210,7 +210,7 @@ h2 {
 /* Animate in. */
 .interests-hexgrid-component g.hexagon,
 .interests-hexgrid-component g.label {
-	animation-delay: calc(var(--animation-offset) * 1s);
+	animation-delay: calc(var(--animation-offset) * 1.5s);
 	animation-duration: 2s;
 	animation-fill-mode: both;
 }
