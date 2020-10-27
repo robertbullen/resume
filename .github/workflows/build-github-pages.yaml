@@ -33,7 +33,8 @@ jobs:
 
             - name: Commit changes
               run: |
-                  git config --global user.email "GitHub Actions"
-                  git config --global user.name "github-actions@github.com"
-                  git commit --all --message='updated docs directory'
+                  git config --global user.email 'GitHub Actions'
+                  git config --global user.name 'github-actions@github.com'
+                  git add --all
+                  git commit --message='updated docs directory'
                   git push
