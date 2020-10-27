@@ -1,9 +1,8 @@
 name: Build GitHub Pages
 
 on:
-    push:
-        page_build:
-            - github-pages
+    page_build:
+        - github-pages
 
 jobs:
     build:
