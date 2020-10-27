@@ -19,6 +19,6 @@ jobs:
 
             - name: Push from master branch to github-pages branch
               run: |
-                  git checkout github-actions
+                  git checkout -b github-actions
                   git merge master
                   git push
