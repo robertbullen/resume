@@ -19,6 +19,7 @@
 		"react": "^16.13.1",
 		"react-dom": "^16.13.1",
 		"react-intersection-observer": "^8.27.1",
+		"string-replace-async": "^2.0.0",
 		"tailwindcss": "^1.8.10",
 		"use-resize-observer": "^6.1.0"
 	},
@@ -36,6 +37,7 @@
 		"@types/react": "^16.9.0",
 		"@types/react-dom": "^16.9.0",
 		"@types/reactstrap": "^8.5.0",
+		"cross-fetch": "^3.0.6",
 		"gh-pages": "^3.1.0",
 		"react-scripts": "3.4.3",
 		"ts-node": "^9.0.0",
@@ -48,12 +50,13 @@
 	"private": true,
 	"scripts": {
 		"build": "react-scripts build",
+		"build:orangray-fonts-output-css": "ts-node-script scripts/build-fonts-css.ts src/styles/orangray/orangray.css --output src/styles/orangray/orangray.output.css",
 		"build:robert-output-json": "ts-node-script scripts/build-resume-json.ts src/resume/robert.ts --output public/robert.output.json",
-		"build:tailwind-output-css": "tailwindcss build src/tailwind.css --output src/tailwind.output.css",
+		"build:tailwind-output-css": "tailwindcss build src/styles/tailwind.css --output src/styles/tailwind.output.css",
 		"deploy": "gh-pages-clean && gh-pages -d build",
 		"eject": "react-scripts eject",
-		"prebuild": "yarn build:robert-output-json && yarn build:tailwind-output-css",
-		"prestart": "yarn build:robert-output-json && yarn build:tailwind-output-css",
+		"prebuild": "yarn build:orangray-fonts-output-css && yarn build:robert-output-json && yarn build:tailwind-output-css",
+		"prestart": "yarn build:orangray-fonts-output-css && yarn build:robert-output-json && yarn build:tailwind-output-css",
 		"start": "react-scripts start",
 		"test": "react-scripts test"
 	},

@@ -11,7 +11,7 @@ function showUsageAndExit(errorMessage?: string): void {
 
 	const scriptName: string = path.basename(__filename);
 	console.info();
-	console.info(`Usage: ${scriptName} <input-ts-file> --output <output-json-path>`);
+	console.info(`Usage: ${scriptName} <input-ts-path> --output <output-json-path>`);
 	console.info();
 
 	process.exit(1);

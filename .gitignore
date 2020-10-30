@@ -5,4 +5,4 @@ yarn-error.log
 
 # Ignore generated files.
 public/robert.output.json
-src/tailwind.output.css
+src/styles/**/*.output.css
