@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { ComponentProps, PropsWithChildren } from 'react';
+import React, { ComponentProps, ElementType, PropsWithChildren } from 'react';
 
 export function generateSectionId(heading: string): string {
 	return heading
@@ -12,18 +12,20 @@ export function generateSectionId(heading: string): string {
 type Props = PropsWithChildren<
 	ComponentProps<'section'> & {
 		heading: string;
+		headingTag?: ElementType;
 		id: string;
 	}
 >;
 
 export function Section(props: Props) {
-	const { children, heading, ...sectionProps } = props;
+	const { children, heading, headingTag, ...sectionProps } = props;
+	const HeadingElement = headingTag ?? 'h2';
 	return (
 		<section
 			{...sectionProps}
 			className={classNames('section-component', sectionProps.className)}
 		>
-			<h2 className="heading">{heading}</h2>
+			<HeadingElement className="heading">{heading}</HeadingElement>
 			{children}
 		</section>
 	);

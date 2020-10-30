@@ -50,8 +50,16 @@ h2 {
 	white-space: nowrap;
 }
 
-#candidate .heading,
-#mission .heading {
+h3 {
+	font-size: 100%;
+	font-family: var(--font-family-light);
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+section#candidate > .heading,
+section#mission > .heading,
+section#skills > .heading {
 	display: none;
 }
 

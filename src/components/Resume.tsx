@@ -26,9 +26,11 @@ export function Resume(props: ResumeProps) {
 						<Section heading="Analytical & Creative Interests" id="interests">
 							<InterestsHexGrid {...props} />
 						</Section>
-						<div className="gap-4 grid grid-cols-1 sm:grid-cols-2">
-							<SkillRatingsChartList {...props} />
-						</div>
+						<Section heading="Skills" id="skills">
+							<div className="gap-4 grid grid-cols-1 sm:grid-cols-2">
+								<SkillRatingsChartList {...props} />
+							</div>
+						</Section>
 					</div>
 					<div>
 						<Section heading="Experience" id="experience">

@@ -9,6 +9,7 @@ export function SkillRatingsChartList(props: ResumeProps) {
 			{Object.keys(props.resume.skills).map((skillCategory: string) => (
 				<Section
 					heading={skillCategory}
+					headingTag="h3"
 					id={generateSectionId(skillCategory)}
 					key={skillCategory}
 				>
