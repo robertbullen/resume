@@ -11,7 +11,7 @@ export function generateSectionId(heading: string): string {
 
 type Props = PropsWithChildren<
 	ComponentProps<'section'> & {
-		heading?: string;
+		heading: string;
 		id: string;
 	}
 >;
@@ -23,7 +23,7 @@ export function Section(props: Props) {
 			{...sectionProps}
 			className={classNames('section-component', sectionProps.className)}
 		>
-			{heading && <h2>{heading}</h2>}
+			<h2 className="heading">{heading}</h2>
 			{children}
 		</section>
 	);

@@ -13,11 +13,11 @@ export function Resume(props: ResumeProps) {
 		<div className="p-4 sm:p-8">
 			<div className="container gap-12 grid grid-cols-1 mx-auto resume-component">
 				<header className="gap-x-12 gap-y-6 grid grid-cols-1 lg:grid-cols-2">
-					<Section id="candidate">
+					<Section heading="Candidate" id="candidate">
 						<CandidateName {...props} />
 						<CandidateContactServiceList {...props} />
 					</Section>
-					<Section id="mission">
+					<Section heading="Mission" id="mission">
 						<Mission {...props} />
 					</Section>
 				</header>
