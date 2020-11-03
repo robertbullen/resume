@@ -4,8 +4,8 @@ on:
     release:
         branches:
             - master
-        # types:
-        #     - publish
+        types:
+            - published
 
 jobs:
     build:
