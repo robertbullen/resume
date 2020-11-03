@@ -1,0 +1,50 @@
+name: Deploy to resume.robertbullen.net
+
+on:
+    release:
+        branches:
+            - master
+        types:
+            - publish
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        strategy:
+            matrix:
+                node-version: [12.x]
+
+        steps:
+            - name: Checkout the master branch
+              uses: actions/checkout@v2
+
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+
+            - name: Restore cached dependencies
+              uses: actions/cache@v2
+              with:
+                  path: '**/node_modules'
+                  key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+            - name: Install new dependencies
+              run: yarn --frozen-lockfile
+
+            - name: Build the website
+              run: |
+                  sed -E -i.bak 's%"homepage":[[:space:]]*"[^"]+"%"homepage": "https://resume.robertbullen.net"%' package.json
+                  yarn build
+
+            - name: Deploy to resume.robertbullen.net
+              uses: jakejarvis/s3-sync-action@master
+              with:
+                  args: --acl public-read --delete
+              env:
+                  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  AWS_REGION: ${{ secrets.AWS_REGION }}
+                  AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+                  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  SOURCE_DIR: 'build'
