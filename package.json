@@ -50,7 +50,7 @@
 	"private": true,
 	"scripts": {
 		"build": "react-scripts build",
-		"build:orangray-fonts-output-css": "ts-node-script scripts/build-fonts-css.ts src/styles/orangray/orangray.css --output src/styles/orangray/orangray.output.css",
+		"build:orangray-fonts-output-css": "ts-node-script scripts/build-fonts-css.ts src/styles/orangray/orangray-fonts.css --output src/styles/orangray/orangray-fonts.output.css",
 		"build:robert-output-json": "ts-node-script scripts/build-resume-json.ts src/resume/robert.ts --output public/robert.output.json",
 		"build:tailwind-output-css": "tailwindcss build src/styles/tailwind.css --output src/styles/tailwind.output.css",
 		"deploy": "gh-pages-clean && gh-pages -d build",

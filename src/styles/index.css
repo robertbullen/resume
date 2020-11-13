@@ -1,2 +1,3 @@
 @import './tailwind.output.css';
-@import './orangray/orangray.output.css';
+@import './orangray/orangray-fonts.output.css';
+@import './orangray/orangray.css';

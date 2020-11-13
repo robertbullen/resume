@@ -56,7 +56,7 @@ export const robert: ResumeModel = {
 		},
 	],
 	interests: {
-		Analytical: [
+		'Analytical Strengths': [
 			{
 				column: 0,
 				row: 2,
@@ -70,17 +70,17 @@ export const robert: ResumeModel = {
 			{
 				column: 1,
 				row: 3,
-				name: 'Unit Testing',
+				name: 'CI/CD',
 			},
 			{
 				column: 2,
 				row: 2,
-				name: 'Analytical',
+				name: 'Analytical Strengths',
 			},
 			{
 				column: 2,
 				row: 4,
-				name: 'Web Services',
+				name: 'Unit Testing',
 			},
 			{
 				column: 3,
@@ -90,7 +90,7 @@ export const robert: ResumeModel = {
 			{
 				column: 3,
 				row: 3,
-				name: 'Coding Languages',
+				name: 'Application Architecture',
 			},
 			{
 				column: 4,
@@ -100,7 +100,12 @@ export const robert: ResumeModel = {
 			{
 				column: 4,
 				row: 2,
-				name: 'Software Engineering',
+				name: 'Coding Languages',
+			},
+			{
+				column: 4,
+				row: 4,
+				name: 'Web Services',
 			},
 			{
 				column: 5,
@@ -108,12 +113,7 @@ export const robert: ResumeModel = {
 				name: 'User Interface Design',
 			},
 		],
-		Creative: [
-			{
-				column: 4,
-				row: 4,
-				name: 'Architecture',
-			},
+		'Creative Interests': [
 			{
 				column: 5,
 				row: 3,
@@ -137,7 +137,7 @@ export const robert: ResumeModel = {
 			{
 				column: 7,
 				row: 3,
-				name: '???',
+				name: 'Interior Design',
 			},
 			{
 				column: 8,
@@ -147,7 +147,7 @@ export const robert: ResumeModel = {
 			{
 				column: 8,
 				row: 2,
-				name: 'Creative',
+				name: 'Creative Interests',
 			},
 			{
 				column: 9,
