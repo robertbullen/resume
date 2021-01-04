@@ -1,0 +1,62 @@
+{
+	"Source Sans Pro ExtraLight": {
+		"fontFamily": "Source Sans Pro",
+		"fontStyle": "normal",
+		"fontWeight": "200"
+	},
+	"Source Sans Pro ExtraLight Italic": {
+		"fontFamily": "Source Sans Pro",
+		"fontStyle": "italic",
+		"fontWeight": "200"
+	},
+	"Source Sans Pro Light": {
+		"fontFamily": "Source Sans Pro",
+		"fontStyle": "normal",
+		"fontWeight": "300"
+	},
+	"Source Sans Pro Light Italic": {
+		"fontFamily": "Source Sans Pro",
+		"fontStyle": "italic",
+		"fontWeight": "300"
+	},
+	"Source Sans Pro Regular": {
+		"fontFamily": "Source Sans Pro",
+		"fontStyle": "normal",
+		"fontWeight": "400"
+	},
+	"Source Sans Pro Regular Italic": {
+		"fontFamily": "Source Sans Pro",
+		"fontStyle": "italic",
+		"fontWeight": "400"
+	},
+	"Source Sans Pro SemiBold": {
+		"fontFamily": "Source Sans Pro",
+		"fontStyle": "normal",
+		"fontWeight": "600"
+	},
+	"Source Sans Pro SemiBold Italic": {
+		"fontFamily": "Source Sans Pro",
+		"fontStyle": "italic",
+		"fontWeight": "600"
+	},
+	"Source Sans Pro Bold": {
+		"fontFamily": "Source Sans Pro",
+		"fontStyle": "normal",
+		"fontWeight": "700"
+	},
+	"Source Sans Pro Bold Italic": {
+		"fontFamily": "Source Sans Pro",
+		"fontStyle": "italic",
+		"fontWeight": "700"
+	},
+	"Source Sans Pro Black": {
+		"fontFamily": "Source Sans Pro",
+		"fontStyle": "normal",
+		"fontWeight": "900"
+	},
+	"Source Sans Pro Black Italic": {
+		"fontFamily": "Source Sans Pro",
+		"fontStyle": "italic",
+		"fontWeight": "900"
+	}
+}
