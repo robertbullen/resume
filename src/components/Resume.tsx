@@ -2,7 +2,7 @@ import React from 'react';
 import { ResumeProps } from '../resume/resume-model';
 import { CandidateContactServiceList } from './CandidateContactServiceList';
 import { CandidateName } from './CandidateName';
-import { ExperienceTimeline } from './ExperienceTimeline';
+// import { ExperienceTimeline } from './ExperienceTimeline';
 import { InterestsHexGrid } from './InterestsHexGrid';
 import { Mission } from './Mission';
 import { Section } from './Section';
@@ -34,7 +34,7 @@ export function Resume(props: ResumeProps) {
 					</div>
 					<div>
 						<Section heading="Experience" id="experience">
-							<ExperienceTimeline {...props} />
+							{/* <ExperienceTimeline {...props} /> */}
 						</Section>
 					</div>
 				</main>
