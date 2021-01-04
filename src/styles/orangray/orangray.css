@@ -234,15 +234,19 @@ section#experience {
 	opacity: 0.1;
 }
 
-.experience-timeline-component g.year-grid rect.dark {
+.experience-timeline-component g.year-grid rect:nth-of-type(even) {
 	fill: var(--color-low-contrast);
 }
 
-.experience-timeline-component g.year-grid rect.light {
+.experience-timeline-component g.year-grid rect:nth-of-type(odd) {
 	fill: none;
 }
 
 .experience-timeline-component g.year-labels {
 	fill: var(--color-low-contrast);
 	font-size: var(--font-size-smaller);
+}
+
+.experience-timeline-component article h3 {
+	border-bottom: solid 1px var(--color-accent-1);
 }
