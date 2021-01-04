@@ -55,7 +55,7 @@
 			}
 		],
 		"interests": {
-			"Analytical": [
+			"Analytical Strengths": [
 				{
 					"column": 0,
 					"row": 2,
@@ -69,17 +69,17 @@
 				{
 					"column": 1,
 					"row": 3,
-					"name": "Unit Testing"
+					"name": "CI/CD"
 				},
 				{
 					"column": 2,
 					"row": 2,
-					"name": "Analytical"
+					"name": "Analytical Strengths"
 				},
 				{
 					"column": 2,
 					"row": 4,
-					"name": "Web Services"
+					"name": "Unit Testing"
 				},
 				{
 					"column": 3,
@@ -89,7 +89,7 @@
 				{
 					"column": 3,
 					"row": 3,
-					"name": "Coding Languages"
+					"name": "Application Architecture"
 				},
 				{
 					"column": 4,
@@ -99,7 +99,12 @@
 				{
 					"column": 4,
 					"row": 2,
-					"name": "Software Engineering"
+					"name": "Coding Languages"
+				},
+				{
+					"column": 4,
+					"row": 4,
+					"name": "Web Services"
 				},
 				{
 					"column": 5,
@@ -107,12 +112,7 @@
 					"name": "User Interface Design"
 				}
 			],
-			"Creative": [
-				{
-					"column": 4,
-					"row": 4,
-					"name": "Architecture"
-				},
+			"Creative Interests": [
 				{
 					"column": 5,
 					"row": 3,
@@ -136,7 +136,7 @@
 				{
 					"column": 7,
 					"row": 3,
-					"name": "???"
+					"name": "Interior Design"
 				},
 				{
 					"column": 8,
@@ -146,7 +146,7 @@
 				{
 					"column": 8,
 					"row": 2,
-					"name": "Creative"
+					"name": "Creative Interests"
 				},
 				{
 					"column": 9,
@@ -165,27 +165,27 @@
 				}
 			]
 		},
-		"mission": "Robert leverages his analytical and creative talents to the fullest when designing and writing modern full stack applications. He is experienced with and enthusiastic about discovering and adopting promising software development technologies and practices.",
+		"mission": "Robert was born to write code. He leverages his analytical and creative talents to the fullest when designing and implementing modern full stack web applications. He enjoys discovering promising development technologies, adopting best practices, and sharing knowledge.",
 		"skills": {
 			"Soft Skills": [
 				{
 					"rating": 4,
-					"skill": "End User Focus"
+					"skill": "Communicating"
 				},
 				{
-					"rating": 4,
-					"skill": "Communication"
-				},
-				{
-					"rating": 4,
+					"rating": 3.5,
 					"skill": "Cont. Learning"
 				},
 				{
 					"rating": 4,
-					"skill": "Mentorship"
+					"skill": "Customer Focusing"
 				},
 				{
 					"rating": 4,
+					"skill": "Mentoring"
+				},
+				{
+					"rating": 3.5,
 					"skill": "Presenting"
 				},
 				{
@@ -207,15 +207,23 @@
 					"skill": "Design Patterns"
 				},
 				{
-					"rating": 4,
-					"skill": "OOP"
+					"rating": 3.5,
+					"skill": "Microservices"
 				},
 				{
-					"rating": 3.5,
+					"rating": 4,
 					"skill": "REST APIs"
+				},
+				{
+					"rating": 4,
+					"skill": "Serverless"
 				}
 			],
-			"Coding Languages": [
+			"Current Coding Languages": [
+				{
+					"rating": 3,
+					"skill": "Bash"
+				},
 				{
 					"rating": 4,
 					"skill": "HTML+CSS"
@@ -225,11 +233,11 @@
 					"skill": "JavaScript"
 				},
 				{
-					"rating": 2.5,
+					"rating": 3.5,
 					"skill": "Python"
 				},
 				{
-					"rating": 3,
+					"rating": 4,
 					"skill": "SQL"
 				},
 				{
@@ -237,11 +245,33 @@
 					"skill": "TypeScript"
 				}
 			],
-			"JavaScript Frameworks": [
+			"Past Coding Languages": [
 				{
-					"rating": 1.5,
-					"skill": "Angular"
+					"rating": 4,
+					"skill": "C"
 				},
+				{
+					"rating": 4,
+					"skill": "C++"
+				},
+				{
+					"rating": 4.5,
+					"skill": "C♯"
+				},
+				{
+					"rating": 5,
+					"skill": "Delphi"
+				},
+				{
+					"rating": 4,
+					"skill": "Java"
+				},
+				{
+					"rating": 2,
+					"skill": "OutSystems"
+				}
+			],
+			"JavaScript Frameworks": [
 				{
 					"rating": 2,
 					"skill": "D3"
@@ -255,7 +285,7 @@
 					"skill": "Node.js"
 				},
 				{
-					"rating": 3,
+					"rating": 3.5,
 					"skill": "React"
 				},
 				{
@@ -263,11 +293,11 @@
 					"skill": "Jest"
 				},
 				{
-					"rating": 3,
+					"rating": 3.5,
 					"skill": "Vue"
 				}
 			],
-			"Packet Analysis": [
+			"Protocol Analysis": [
 				{
 					"rating": 5,
 					"skill": "TCP/IP"
